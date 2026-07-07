@@ -1,11 +1,16 @@
-import api from "@/features/axios";
+import api from "../axios";
 
-export const createBooking = async (data) => {
-    const response = await api.post("/bookings", data);
-    return response.data;
+export const getCarById = async (id) => {
+    const { data } = await api.get(`/cars/${id}`);
+    return data;
 };
 
-export const getMyBookings = async () => {
-    const response = await api.get("/bookings/my-bookings");
-    return response.data;
+export const createBooking = async (payload) => {
+    const { data } = await api.post("/bookings", payload);
+    return data;
+};
+
+export const getBookingById = async (bookingId) => {
+    const { data } = await api.get(`/bookings/${bookingId}`);
+    return data;
 };
