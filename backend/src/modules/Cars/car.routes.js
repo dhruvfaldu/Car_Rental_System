@@ -24,6 +24,8 @@ router.post(
 
 router.get("/", CarController.getAll);
 
+router.get("/slug/:slug", CarController.getBySlug);
+
 router.get(
     "/:id",
     mongoIdValidator(),

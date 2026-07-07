@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Brand from "../../models/brand.model.js";
 import Category from "../../models/category.model.js";
 import Feature from "../../models/feature.model.js";
@@ -11,10 +12,31 @@ import QueryBuilder from "../../utils/queryBuilder.js";
 class CarService {
 
     async getCars(queryParams) {
+        const query = { ...queryParams };
+
+        if (query.brand && !mongoose.Types.ObjectId.isValid(query.brand)) {
+            const brandObj = await Brand.findOne({
+                $or: [
+                    { name: { $regex: `^${query.brand}$`, $options: "i" } },
+                    { slug: query.brand.toLowerCase() }
+                ]
+            });
+            query.brand = brandObj ? brandObj._id : new mongoose.Types.ObjectId();
+        }
+
+        if (query.category && !mongoose.Types.ObjectId.isValid(query.category)) {
+            const catObj = await Category.findOne({
+                $or: [
+                    { name: { $regex: `^${query.category}$`, $options: "i" } },
+                    { slug: query.category.toLowerCase() }
+                ]
+            });
+            query.category = catObj ? catObj._id : new mongoose.Types.ObjectId();
+        }
 
         const builder = new QueryBuilder(
             Car.find({ isActive: true }),
-            queryParams
+            query
         )
             .search(["name"])
             .filter()
@@ -43,6 +65,19 @@ class CarService {
     async getCarById(id) {
 
         const car = await Car.findById(id)
+            .populate("brand", "name slug")
+            .populate("category", "name slug")
+            .populate("features", "name icon");
+
+        if (!car) {
+            throw new ApiError(404, "Car not found");
+        }
+
+        return car;
+    }
+
+    async getCarBySlug(slug) {
+        const car = await Car.findOne({ slug })
             .populate("brand", "name slug")
             .populate("category", "name slug")
             .populate("features", "name icon");

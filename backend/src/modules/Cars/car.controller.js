@@ -57,6 +57,22 @@ class CarController {
 
     });
 
+    getBySlug = asyncHandler(async (req, res) => {
+
+        const car = await CarService.getCarBySlug(
+            req.params.slug
+        );
+
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                "Car fetched successfully",
+                car
+            )
+        );
+
+    });
+
     update = asyncHandler(async (req, res) => {
 
         const car = await CarService.updateCar(

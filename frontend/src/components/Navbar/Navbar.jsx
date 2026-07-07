@@ -8,6 +8,7 @@ import {
     Phone,
     ArrowRight,
     Menu,
+    LogOut,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -109,17 +110,23 @@ export default function Navbar() {
                     </ul>
 
                     {/* Desktop Button */}
+                    <div className="space-x-2 items-center  hidden lg:block">
+                        <Button
+                            className=" rounded-full px-6"
+                            onClick={() => logoutUser()}
+                            disabled={isPending}
+                        >
+                            {isPending ? "Logging out..." : "Logout"}
+                            <LogOut />
+                        </Button>
 
-                    <div className="hidden lg:block">
                         <Button className="rounded-full px-6">
                             Book a Car
-
-                            <ArrowRight className="ml-2 h-4 w-4" />
+                            <ArrowRight />
                         </Button>
                     </div>
 
                     {/* Mobile Menu */}
-
                     <div className="lg:hidden ">
                         <Sheet className="">
                             <SheetTrigger asChild>

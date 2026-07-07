@@ -31,11 +31,16 @@ class QueryBuilder {
         if (this.queryString.category)
             filter.category = this.queryString.category;
 
-        if (this.queryString.fuelType)
-            filter.fuelType = this.queryString.fuelType;
+        const fuelTypeParam = this.queryString.fuelType || this.queryString.fuel;
+        if (fuelTypeParam) {
+            const values = fuelTypeParam.split(",");
+            filter.fuelType = { $in: values.map(v => new RegExp(`^${v}$`, "i")) };
+        }
 
-        if (this.queryString.transmission)
-            filter.transmission = this.queryString.transmission;
+        if (this.queryString.transmission) {
+            const values = this.queryString.transmission.split(",");
+            filter.transmission = { $in: values.map(v => new RegExp(`^${v}$`, "i")) };
+        }
 
         if (this.queryString.status)
             filter.status = this.queryString.status;
@@ -59,7 +64,10 @@ class QueryBuilder {
     }
 
     sort() {
-        const sort = this.queryString.sort || "-createdAt";
+        let sort = this.queryString.sort || "-createdAt";
+        if (sort === "newest") {
+            sort = "-createdAt";
+        }
 
         this.query = this.query.sort(sort);
 
