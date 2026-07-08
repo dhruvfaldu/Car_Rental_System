@@ -5,6 +5,7 @@ import Login from "@/pages/Auth/Login";
 import Register from "@/pages/Auth/Register";
 import MyBooking from "@/pages/Booking/MyBooking";
 import Cars from "@/pages/CarListing/Cars";
+import CarDetail from "@/pages/CarDetail/CarDetail";
 import Home from "@/pages/Home/Home";
 import Profile from "@/pages/Account/Profile";
 import Invoices from "@/pages/Account/Invoices";
@@ -21,6 +22,7 @@ function AppRoutes() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="/cars" element={<Cars />} />
+          <Route path="/cars/:slug" element={<CarDetail />} />
         </Route>
 
         {/* Guest Only Routes */}

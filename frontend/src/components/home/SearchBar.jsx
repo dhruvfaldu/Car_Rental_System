@@ -43,7 +43,7 @@ export default function SearchBar() {
                         Luxury cars on Rent
                     </h1>
 
-                    <div className=" flex items-center justify-between mx-auto  max-w-5xl rounded-full bg-white shadow-xl px-10 py-5">
+                    <div className=" flex items-center justify-between mx-auto  max-w-4xl rounded-full bg-white shadow-xl px-10 py-5">
 
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-4 items-center">
 
@@ -85,7 +85,7 @@ export default function SearchBar() {
                                     <PopoverTrigger asChild>
                                         <Button
                                             variant="ghost"
-                                            className="mt-2 w-full justify-between p-0 font-normal"
+                                            className="mt-2 w-full border justify-between p-0 font-normal"
                                         >
                                             {format(pickupDate, "dd-MM-yyyy")}
 
@@ -140,14 +140,14 @@ export default function SearchBar() {
                         {/* Search Button */}
 
                         <Button
-                            className="h-14 rounded-full text-base"
+                            className="h-14 rounded-full text-base w-1/5 font-semibold"
                         >
                             <Search className="mr-2 h-5 w-5" />
                             Search
                         </Button>
 
                     </div>
-                    <div className="max-h-74">
+                    <div className="max-h-74 max-w-4xl">
                         <img src="src/assets/main_car.png" alt="Car Image" />
                     </div>
                 </div>

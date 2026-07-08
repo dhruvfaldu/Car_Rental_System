@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { getProfile, login, logoutUser, register } from "./authApi";
 import { loginSuccess, setUser, logout } from "@/store/slices/authSlice";
@@ -38,9 +38,11 @@ export const useProfileQuery = () => {
     });
 };
 
+
 export const useLogoutMutation = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: logoutUser,
@@ -48,7 +50,9 @@ export const useLogoutMutation = () => {
         onSuccess: () => {
             dispatch(logout());
 
-            Navigate("/login");
+            queryClient.clear();
+
+            navigate("/login");
         },
     });
 };
