@@ -14,3 +14,8 @@ export const getBookingById = async (bookingId) => {
     const { data } = await api.get(`/bookings/${bookingId}`);
     return data;
 };
+
+export const getMyBookings = async (params) => {
+    const { data } = await api.get("/bookings/my-bookings", { params });
+    return data;
+};
