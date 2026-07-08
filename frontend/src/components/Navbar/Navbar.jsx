@@ -8,6 +8,9 @@ import {
     LogOut,
     User,
     ChevronDown,
+    Info,
+    Phone,
+    ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {

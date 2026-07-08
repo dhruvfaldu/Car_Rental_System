@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     user: null,
     isAuthenticated: false,
+    // Start as true so ProtectedRoute shows spinner while useMe fetches session
     isLoading: true,
     error: null,
 };
@@ -43,7 +44,7 @@ const authSlice = createSlice({
         },
         clearError: (state) => {
             state.error = null;
-        }
+        },
     },
 });
 
