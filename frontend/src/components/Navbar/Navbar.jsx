@@ -4,15 +4,14 @@ import {
     Home,
     Car,
     BookOpen,
-    Info,
-    Phone,
-    ArrowRight,
     Menu,
     LogOut,
     User,
     ChevronDown,
+    Info,
+    Phone,
+    ArrowRight,
 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -30,11 +29,11 @@ import { useLogoutMutation } from "@/features/auth/useAuthQuery";
 import { useSelector } from "react-redux";
 
 const navLinks = [
-    { name: "Home",        path: "/",            icon: Home },
-    { name: "Cars",        path: "/cars",         icon: Car },
-    { name: "My Bookings", path: "/my-bookings",  icon: BookOpen },
-    { name: "About",       path: "/about",        icon: Info },
-    { name: "Contact",     path: "/contact",      icon: Phone },
+    { name: "Home", path: "/", icon: Home },
+    { name: "Cars", path: "/cars", icon: Car },
+    { name: "My Bookings", path: "/my-bookings", icon: BookOpen },
+    { name: "About", path: "/about", icon: Info },
+    { name: "Contact", path: "/contact", icon: Phone },
 ];
 
 export default function Navbar() {

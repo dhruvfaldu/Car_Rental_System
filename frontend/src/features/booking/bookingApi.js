@@ -19,3 +19,8 @@ export const getMyBookings = async (params) => {
     const { data } = await api.get("/bookings/my-bookings", { params });
     return data;
 };
+
+export const cancelBooking = async ({ bookingId, cancelReason }) => {
+    const { data } = await api.patch(`/bookings/${bookingId}/cancel`, { cancelReason });
+    return data;
+};
