@@ -1,9 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { Loader2 } from "lucide-react";
 
 const ProtectedRoute = () => {
-    const { isAuthenticated, user, isLoading } = useSelector((state) => state.auth);
+    const { isAuthenticated, user, isLoading } = useAuth();
 
     if (isLoading) {
         return (

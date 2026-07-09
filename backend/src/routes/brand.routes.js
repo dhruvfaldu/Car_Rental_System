@@ -4,6 +4,7 @@ import BrandController from "../controllers/brand.controller.js";
 
 import { protect, authorize } from "../middleware/auth.middleware.js";
 import validate from "../middleware/validate.middleware.js";
+import upload from "../middleware/upload.middleware.js";
 
 import { createBrandValidator } from "../validators/brand.validator.js";
 
@@ -28,6 +29,7 @@ router.post(
     "/",
     protect,
     authorize("admin"),
+    upload.single("logo"),
     createBrandValidator,
     validate,
     BrandController.create
@@ -38,6 +40,7 @@ router.put(
     "/:id",
     protect,
     authorize("admin"),
+    upload.single("logo"),
     createBrandValidator,
     validate,
     BrandController.update

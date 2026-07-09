@@ -10,12 +10,28 @@ class BrandController extends BaseController {
     }
 
     create = asyncHandler(async (req, res) => {
-        const brand = await BrandService.createBrand(req.body);
+        const brand = await BrandService.createBrand(req.body, req.file);
 
         res.status(201).json(
             new ApiResponse(
                 201,
                 "Brand created successfully",
+                brand
+            )
+        );
+    });
+
+    update = asyncHandler(async (req, res) => {
+        const brand = await BrandService.updateBrand(
+            req.params.id,
+            req.body,
+            req.file
+        );
+
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                "Brand updated successfully",
                 brand
             )
         );

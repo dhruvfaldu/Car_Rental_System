@@ -1,18 +1,24 @@
 import { useLocation } from "react-router-dom";
 import { Bell, Search, User } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useAuth } from "@/features/auth/context/AuthContext";
 
 const Header = () => {
     const location = useLocation();
-    const { user } = useSelector((state) => state.auth);
+    const { user } = useAuth();
 
     // Dynamic Title based on route
     const getPageTitle = () => {
         switch (location.pathname) {
             case "/":
                 return "Dashboard Overview";
-            case "/brand":
+            case "/brands":
                 return "Brands Management";
+            case "/categories":
+                return "Categories Management";
+            case "/features":
+                return "Features Management";
+            case "/cars":
+                return "Fleet Management";
             default:
                 return "RevDrive Admin";
         }
