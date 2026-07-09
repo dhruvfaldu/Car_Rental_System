@@ -110,8 +110,6 @@ export default function CarFilters() {
                 </Button>
             </div>
 
-            {/* <Separator className="bg-slate-100" /> */}
-
             {/* Search */}
             <form onSubmit={handleSearchSubmit} className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />

@@ -14,6 +14,16 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel";
+import car1 from "@/assets/Car.png";
+import car2 from "@/assets/Car2.png";
+import car3 from "@/assets/main_car.png";
 
 import { Calendar } from "@/components/ui/calendar";
 
@@ -34,6 +44,12 @@ export default function SearchBar() {
     const [returnDate, setReturnDate] = useState(
         new Date(Date.now() + 86400000)
     );
+    const cars = [car1, car2, car3];
+    // const cars = [
+    //     "/src/assets/car1.png",
+    //     "/src/assets/car2.png",
+    //     "/src/assets/car3.png",
+    // ];
 
     return (
         <>
@@ -150,6 +166,28 @@ export default function SearchBar() {
                     <div className="max-h-74 max-w-4xl">
                         <img src="src/assets/main_car.png" alt="Car Image" />
                     </div>
+                    {/* <div className="max-w-4xl max-h-74">
+                        <Carousel className="w-full">
+                            <CarouselContent>
+
+                                {cars.map((car, index) => (
+                                    <CarouselItem key={index}>
+                                        <img
+                                            src={car}
+                                            alt={`Car ${index + 1}`}
+                                            className="w-full object-contain"
+                                        />
+                                    </CarouselItem>
+                                ))}
+
+                            </CarouselContent>
+
+                            <CarouselPrevious />
+
+                            <CarouselNext />
+
+                        </Carousel>
+                    </div> */}
                 </div>
 
             </div>

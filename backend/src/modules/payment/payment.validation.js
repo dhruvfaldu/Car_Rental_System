@@ -27,23 +27,33 @@ const createPayment = z.object({
 
 const verifyPayment = z.object({
     body: z.object({
-        orderId: z
-            .string({
-                required_error: "Order ID is required.",
-            })
-            .trim(),
-
         paymentId: z
             .string({
                 required_error: "Payment ID is required.",
             })
             .trim(),
 
-        signature: z
+        orderId: z
             .string({
-                required_error: "Signature is required.",
+                required_error: "Order ID is required.",
             })
             .trim(),
+
+        razorpayPaymentId: z
+            .string({
+                required_error: "Razorpay payment ID is required.",
+            })
+            .trim(),
+
+        razorpaySignature: z
+            .string({
+                required_error: "Razorpay signature is required.",
+            })
+            .trim(),
+
+        gatewayResponse: z
+            .any()
+            .optional(),
     }),
 });
 

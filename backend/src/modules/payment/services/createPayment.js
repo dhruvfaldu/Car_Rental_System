@@ -39,10 +39,22 @@ export const createPayment = async ({
 
         // Already Linked
         if (booking.payment) {
-            throw new ApiError(
-                409,
-                "Payment already exists for this booking."
-            );
+            const existingPayment = await Payment.findById(booking.payment).session(session);
+            if (existingPayment && (existingPayment.status === PAYMENT_STATUS.PENDING || existingPayment.status === PAYMENT_STATUS.FAILED)) {
+                await session.commitTransaction();
+                return await Payment.findById(existingPayment._id)
+                    .populate("user", "name email")
+                    .populate({
+                        path: "booking",
+                        select:
+                            "bookingNumber totalAmount bookingStatus",
+                    });
+            } else {
+                throw new ApiError(
+                    409,
+                    "Payment already exists for this booking."
+                );
+            }
         }
 
         // Cancelled Booking
