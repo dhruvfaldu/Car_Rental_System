@@ -1,7 +1,29 @@
-import LoginForm from "../components/LoginForm";
+import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Loader2 } from "lucide-react";
 import { Car } from "lucide-react";
+import LoginForm from "../components/LoginForm";
 
 const Login = () => {
+    const { isAuthenticated, isLoading, user } = useSelector((state) => state.auth);
+
+    // While session is being verified, show a full-screen loader
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-950 text-zinc-100">
+                <Loader2 className="h-10 w-10 text-sky-500 animate-spin" />
+                <p className="mt-4 text-sm font-medium tracking-wide text-zinc-400 animate-pulse">
+                    Verifying session...
+                </p>
+            </div>
+        );
+    }
+
+    // If already authenticated as admin, redirect to dashboard
+    if (isAuthenticated && user?.role === "admin") {
+        return <Navigate to="/" replace />;
+    }
+
     return (
         <div className="relative min-h-screen flex items-center justify-center bg-zinc-950 overflow-hidden font-sans selection:bg-sky-500 selection:text-white">
             {/* Ambient Background Glows */}

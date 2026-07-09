@@ -45,6 +45,7 @@ export default function Booking() {
         register,
         watch,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm({
         resolver: zodResolver(bookingSchema),
@@ -102,6 +103,16 @@ export default function Booking() {
 
         setSummary({ totalDays: diff, subtotal, tax, total });
     }, [pickupDate, returnDate, car]);
+
+    // Format minimum return date dynamic to pickup date
+    const getMinReturnDate = () => {
+        if (!pickupDate) {
+            return new Date().toISOString().split("T")[0];
+        }
+        const nextDay = new Date(pickupDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+        return nextDay.toISOString().split("T")[0];
+    };
 
     if (loading) {
         return (
@@ -172,7 +183,7 @@ export default function Booking() {
     return (
         <main className="bg-slate-50/50 min-h-screen py-8 md:py-12">
             <div className="container mx-auto max-w-7xl px-4">
-                
+
                 {/* Back button and page header */}
                 <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
@@ -195,7 +206,7 @@ export default function Booking() {
                 </div>
 
                 <div className="grid lg:grid-cols-3 gap-8">
-                    
+
                     {/* Left: Input Booking Form */}
                     <div className="lg:col-span-2 space-y-6">
                         <motion.div
@@ -478,7 +489,6 @@ export default function Booking() {
                             </Card>
                         </motion.div>
                     </div>
-
                 </div>
             </div>
         </main>

@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 
-export const registerUser = async ({ name, email, password, phone }) => {
+export const registerUser = async ({ name, email, password, phone, role = "customer" }) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -12,7 +12,7 @@ export const registerUser = async ({ name, email, password, phone }) => {
         name,
         email,
         password,
-        role: "customer",
+        role,
         phone,
     });
 

@@ -14,7 +14,7 @@ import Bookings from "@/pages/Account/Bookings";
 import PublicRoutes from "./PublicRoutes";
 import PrivateRoutes from "./PrivateRoutes";
 import Booking from "@/pages/Booking/Booking";
-import BookingConfirmation from "@/pages/Booking/BookingConfirmation ";
+import BookingConfirmation from "@/pages/Booking/BookingConfirmation";
 
 function AppRoutes() {
   return (
