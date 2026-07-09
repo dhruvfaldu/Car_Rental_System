@@ -4,7 +4,9 @@ import ApiError from "../utils/ApiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 export const protect = asyncHandler(async (req, res, next) => {
-    const token = req.cookies.accessToken;
+    const appType = req.headers["x-app-type"] || "customer";
+    const cookieName = appType === "admin" ? "adminAccessToken" : "accessToken";
+    const token = req.cookies[cookieName];
 
     if (!token) {
         throw new ApiError(401, "Unauthorized");

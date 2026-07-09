@@ -6,6 +6,9 @@ const cleanBaseUrl = rawBaseUrl.replace(/['"\s]/g, "") || "/api/v1";
 const api = axios.create({
     baseURL: cleanBaseUrl,
     withCredentials: true,
+    headers: {
+        "X-App-Type": "admin",
+    },
 });
 
 api.interceptors.response.use(

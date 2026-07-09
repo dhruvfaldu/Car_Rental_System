@@ -18,30 +18,29 @@ export default function BookingFilters({
     onReset,
 }) {
     return (
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-100/50">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/20 p-5 shadow-sm">
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
                     if (onApply) onApply();
                 }}
-                className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 items-center"
+                className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 items-end"
             >
-                {/* Search Input */}
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Search Reservation</label>
+                    <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Search Reservation</label>
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                         <Input
                             placeholder="Search booking number..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-9 pr-8 mb-1.5 border-slate-200 focus-visible:ring-indigo-600 hover:border-slate-350 transition-colors"
+                            className="bg-zinc-950 border-zinc-800 text-zinc-150 pl-9 pr-8 focus-visible:ring-zinc-700 transition-colors"
                         />
                         {search && (
                             <button
                                 type="button"
                                 onClick={() => setSearch("")}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center text-slate-400 hover:text-slate-600 rounded-full"
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center text-zinc-500 hover:text-zinc-350 rounded-full"
                             >
                                 <X size={13} />
                             </button>
@@ -49,16 +48,15 @@ export default function BookingFilters({
                     </div>
                 </div>
 
-                {/* Status Dropdown */}
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Filter by Status</label>
-                    <Select value={status} onValueChange={(val) => setStatus(val === "all" ? "" : val)}>
-                        <SelectTrigger className="border-slate-200 hover:border-slate-350 transition-colors focus:ring-indigo-650">
+                    <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Filter by Status</label>
+                    <Select value={status || "all"} onValueChange={(val) => setStatus(val === "all" ? "" : val)}>
+                        <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-200 transition-colors focus:ring-zinc-700">
                             <SelectValue placeholder="Booking Status" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-100">
                             <SelectItem value="all">All Bookings</SelectItem>
-                            <SelectItem value="Pending">Pending Awaiting Pay</SelectItem>
+                            <SelectItem value="Pending">Pending Approval</SelectItem>
                             <SelectItem value="Confirmed">Confirmed</SelectItem>
                             <SelectItem value="Picked Up">Active / Picked Up</SelectItem>
                             <SelectItem value="Completed">Completed</SelectItem>
@@ -67,9 +65,8 @@ export default function BookingFilters({
                     </Select>
                 </div>
 
-                {/* Filter and Clear Buttons */}
-                <div className="flex-row-reverse md:col-span-1 lg:col-span-2 flex gap-3">
-                    <Button type="submit" className=" bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm transition-colors">
+                <div className="flex gap-3">
+                    <Button type="submit" className="bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-semibold shadow-lg hover:shadow-sky-500/10 transition-colors">
                         Apply Search
                     </Button>
                     {(search || status) && (
@@ -77,7 +74,7 @@ export default function BookingFilters({
                             type="button"
                             variant="outline"
                             onClick={onReset}
-                            className="border-slate-200 text-slate-650 hover:bg-slate-50 transition-colors"
+                            className="border-zinc-800 bg-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 transition-colors"
                         >
                             Reset
                         </Button>

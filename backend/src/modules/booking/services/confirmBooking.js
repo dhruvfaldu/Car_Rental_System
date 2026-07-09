@@ -31,24 +31,26 @@ export const confirmBooking = async ({
         );
     }
 
-    if (!booking.payment) {
-        throw new ApiError(
-            400,
-            "Payment not found for this booking."
-        );
-    }
+    if (booking.paymentMethod !== "Cash") {
+        if (!booking.payment) {
+            throw new ApiError(
+                400,
+                "Payment not found for this booking."
+            );
+        }
 
-    const payment = await Payment.findById(booking.payment);
+        const payment = await Payment.findById(booking.payment);
 
-    if (!payment) {
-        throw new ApiError(404, "Payment not found.");
-    }
+        if (!payment) {
+            throw new ApiError(404, "Payment not found.");
+        }
 
-    if (payment.status !== PAYMENT_STATUS.PAID) {
-        throw new ApiError(
-            400,
-            "Only paid bookings can be confirmed."
-        );
+        if (payment.status !== PAYMENT_STATUS.PAID) {
+            throw new ApiError(
+                400,
+                "Only paid bookings can be confirmed."
+            );
+        }
     }
 
     await checkAvailability({

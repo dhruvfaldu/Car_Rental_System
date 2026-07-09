@@ -10,16 +10,14 @@ function Home() {
             </div>
             {/* <CarListing /> */}
             <div className="container mx-auto px-6 bg-white py-10">
-                <div className="flex flex-col items-center justify-center  px-6">
-                    <div className="text-center">
-                        <h1 className="text-4xl text-center font-semibold ">Featured Vehicles</h1>
-                        <p className="text-lg text-gray-600 ">Explore our selection of premium vehicles available for your next adventure.</p>
+                <div className="flex flex-col items-center justify-center">
+                    <div className="text-center w-full max-w-7xl">
+                        <h1 className="text-4xl font-semibold">Featured Vehicles</h1>
+                        <p className="text-lg text-gray-600 mt-2">Explore our selection of premium vehicles available for your next adventure.</p>
 
-                        <div className="p-10">
+                        <div className="py-8 px-2 sm:px-6">
                             <CarGrid />
                         </div>
-
-
                     </div>
                 </div>
             </div>

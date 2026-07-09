@@ -49,7 +49,7 @@ export default function MasterTable({
             </div>
 
             {/* Glassmorphic Table Container */}
-            <div className="overflow-hidden border border-zinc-800/80 rounded-xl bg-zinc-900/40 backdrop-blur-md">
+            <div className="overflow-x-auto border border-zinc-800/80 rounded-xl bg-zinc-900/40 backdrop-blur-md">
                 <Table>
                     <TableHeader className="bg-zinc-950/80 border-b border-zinc-800">
                         <TableRow className="hover:bg-transparent border-b border-zinc-800">
