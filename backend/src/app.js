@@ -14,6 +14,7 @@ import paymentRoutes from "./modules/payment/payment.routes.js";
 import pickupRoutes from "./modules/pickup/pickup.routes.js";
 import returnRoutes from "./modules/return/return.routes.js";
 import invoiceRoutes from "./modules/invoice/invoice.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use("/api/v1/payments", paymentRoutes);
 app.use("/api/v1/pickups", pickupRoutes);
 app.use("/api/v1/returns", returnRoutes);
 app.use("/api/v1/invoices", invoiceRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
     res.json({

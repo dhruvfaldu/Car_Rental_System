@@ -36,7 +36,7 @@ const router = express.Router();
 router.post(
     "/",
     protect,
-    authorize(USER_ROLES.CUSTOMER),
+    authorize(USER_ROLES.CUSTOMER, USER_ROLES.ADMIN),
     validateRequest(createBookingValidation),
     createBookingController
 );
@@ -44,7 +44,7 @@ router.post(
 router.get(
     "/my-bookings",
     protect,
-    authorize(USER_ROLES.CUSTOMER),
+    authorize(USER_ROLES.CUSTOMER, USER_ROLES.ADMIN),
     getMyBookingsController
 );
 
