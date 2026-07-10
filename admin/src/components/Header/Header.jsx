@@ -1,12 +1,11 @@
 import { useLocation } from "react-router-dom";
-import { Bell, Search, User } from "lucide-react";
+import { Bell, Search, User, Menu } from "lucide-react";
 import { useAuth } from "@/features/auth/context/AuthContext";
 
-const Header = () => {
+const Header = ({ onToggleSidebar }) => {
     const location = useLocation();
     const { user } = useAuth();
 
-    // Dynamic Title based on route
     const getPageTitle = () => {
         switch (location.pathname) {
             case "/":
@@ -19,24 +18,33 @@ const Header = () => {
                 return "Features Management";
             case "/cars":
                 return "Fleet Management";
+            case "/bookings":
+                return "Reservations Management";
             default:
                 return "RevDrive Admin";
         }
     };
 
     return (
-        <header className="h-16 border-b border-zinc-800 bg-zinc-950/60 backdrop-blur-md flex items-center justify-between px-8 select-none">
-            {/* Page Title */}
-            <div>
-                <h1 className="text-xl font-bold text-zinc-100 tracking-tight">
+        <header className="h-16 border-b border-zinc-800 bg-zinc-950/60 backdrop-blur-md flex items-center justify-between px-4 sm:px-8 select-none">
+            {/* Page Title & Hamburger */}
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={onToggleSidebar}
+                    className="p-1.5 text-zinc-400 hover:text-zinc-200 transition-colors md:hidden focus:outline-none"
+                    title="Toggle Sidebar"
+                >
+                    <Menu className="h-5 w-5" />
+                </button>
+                <h1 className="text-base sm:text-lg font-bold text-zinc-100 tracking-tight">
                     {getPageTitle()}
                 </h1>
             </div>
 
             {/* Header Actions */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 sm:gap-6">
                 {/* Search Bar - Aesthetic only */}
-                <div className="relative hidden md:block">
+                <div className="relative hidden lg:block">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                         <Search className="h-4 w-4" />
                     </span>

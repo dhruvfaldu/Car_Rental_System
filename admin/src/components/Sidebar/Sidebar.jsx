@@ -9,10 +9,11 @@ import {
     LogOut,
     Tags,
     SlidersHorizontal,
+    X,
 } from "lucide-react";
 import { useAuth } from "@/features/auth/context/AuthContext";
 
-const Sidebar = () => {
+const Sidebar = ({ onClose }) => {
     const location = useLocation();
     const { logout, user } = useAuth();
 
@@ -46,7 +47,6 @@ const Sidebar = () => {
             name: "Bookings",
             icon: CalendarDays,
             path: "/bookings",
-            disabled: true,
         },
         {
             name: "Users",
@@ -62,13 +62,17 @@ const Sidebar = () => {
         },
     ];
 
+    const handleLinkClick = () => {
+        if (onClose) onClose();
+    };
+
     return (
         <aside className="w-64 h-full bg-zinc-950 border-r border-zinc-800 flex flex-col justify-between shrink-0 select-none">
             {/* Upper Portion */}
             <div className="flex flex-col overflow-y-auto">
                 {/* Logo Section */}
-                <div className="h-16 flex items-center px-6 border-b border-zinc-900">
-                    <Link to="/" className="flex items-center gap-3">
+                <div className="h-16 flex items-center justify-between px-6 border-b border-zinc-900">
+                    <Link to="/" className="flex items-center gap-3" onClick={handleLinkClick}>
                         <div className="p-2 bg-gradient-to-tr from-sky-500 to-indigo-500 rounded-lg">
                             <Car className="h-5 w-5 text-white" />
                         </div>
@@ -76,6 +80,15 @@ const Sidebar = () => {
                             RevDrive Admin
                         </span>
                     </Link>
+                    {onClose && (
+                        <button
+                            onClick={onClose}
+                            className="p-1.5 text-zinc-400 hover:text-zinc-200 md:hidden focus:outline-none"
+                            title="Close Sidebar"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                    )}
                 </div>
 
                 {/* Nav Links */}
@@ -104,6 +117,7 @@ const Sidebar = () => {
                             <Link
                                 key={item.name}
                                 to={item.path}
+                                onClick={handleLinkClick}
                                 className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                                     isActive
                                         ? "bg-gradient-to-r from-sky-500/10 to-indigo-500/5 text-sky-400 border border-sky-500/20"
@@ -130,14 +144,17 @@ const Sidebar = () => {
                                 {user.name}
                             </p>
                             <p className="text-xs text-zinc-500 truncate">
-                                {user.email}
+                                {user.role}
                             </p>
                         </div>
                     </div>
                 )}
                 
                 <button
-                    onClick={logout}
+                    onClick={() => {
+                        logout();
+                        handleLinkClick();
+                    }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all duration-200 cursor-pointer"
                 >
                     <LogOut className="h-4 w-4" />

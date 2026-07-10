@@ -41,3 +41,29 @@ export const loginUser = async ({ email, password }) => {
         token,
     };
 };
+
+export const updateProfile = async (userId, updateData) => {
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    if (updateData.email && updateData.email !== user.email) {
+        const emailExists = await User.findOne({ email: updateData.email });
+        if (emailExists) {
+            throw new ApiError(409, "Email already exists");
+        }
+    }
+
+    if (updateData.name) user.name = updateData.name;
+    if (updateData.email) user.email = updateData.email;
+    if (updateData.phone) user.phone = updateData.phone;
+    
+    if (updateData.password) {
+        user.password = updateData.password;
+    }
+
+    await user.save();
+
+    return await User.findById(userId).select("-password");
+};
