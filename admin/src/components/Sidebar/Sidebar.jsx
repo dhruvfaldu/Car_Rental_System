@@ -52,13 +52,11 @@ const Sidebar = ({ onClose }) => {
             name: "Users",
             icon: Users,
             path: "/users",
-            disabled: true,
         },
         {
             name: "Invoices",
             icon: FileText,
             path: "/invoices",
-            disabled: true,
         },
     ];
 

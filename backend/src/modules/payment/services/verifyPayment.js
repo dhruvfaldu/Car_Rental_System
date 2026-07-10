@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 
 import Payment from "../payment.model.js";
 import { Booking } from "../../booking/booking.model.js";
+import Car from "../../Cars/car.model.js";
+import { CAR_STATUS } from "../../Cars/car.constant.js";
 
 import ApiError from "../../../utils/ApiError.js";
 
@@ -74,6 +76,8 @@ export const verifyPayment = async ({
         booking.paidAt = payment.paidAt;
 
         await booking.save({ session });
+
+
 
         await session.commitTransaction();
 
