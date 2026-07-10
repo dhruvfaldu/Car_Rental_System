@@ -7,14 +7,14 @@ import {
     Users,
     FileText,
     LogOut,
+    Tags,
+    SlidersHorizontal,
 } from "lucide-react";
-import { useLogout } from "@/features/auth/hook/useLogout";
-import { useSelector } from "react-redux";
+import { useAuth } from "@/features/auth/context/AuthContext";
 
 const Sidebar = () => {
     const location = useLocation();
-    const { logout } = useLogout();
-    const { user } = useSelector((state) => state.auth);
+    const { logout, user } = useAuth();
 
     const navItems = [
         {
@@ -25,13 +25,22 @@ const Sidebar = () => {
         {
             name: "Brands",
             icon: Award,
-            path: "/brand",
+            path: "/brands",
+        },
+        {
+            name: "Categories",
+            icon: Tags,
+            path: "/categories",
+        },
+        {
+            name: "Features",
+            icon: SlidersHorizontal,
+            path: "/features",
         },
         {
             name: "Cars",
             icon: Car,
             path: "/cars",
-            disabled: true,
         },
         {
             name: "Bookings",

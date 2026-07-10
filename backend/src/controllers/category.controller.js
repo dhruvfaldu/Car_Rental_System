@@ -10,12 +10,28 @@ class CategoryController extends BaseController {
     }
 
     create = asyncHandler(async (req, res) => {
-        const category = await CategoryService.createCategory(req.body);
+        const category = await CategoryService.createCategory(req.body, req.file);
 
         res.status(201).json(
             new ApiResponse(
                 201,
                 "Category created successfully",
+                category
+            )
+        );
+    });
+
+    update = asyncHandler(async (req, res) => {
+        const category = await CategoryService.updateCategory(
+            req.params.id,
+            req.body,
+            req.file
+        );
+
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                "Category updated successfully",
                 category
             )
         );
