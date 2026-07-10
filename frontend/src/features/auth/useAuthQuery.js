@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
-import { getProfile, login, logoutUser, register } from "./authApi";
+import { getProfile, login, logoutUser, register, updateProfile } from "./authApi";
 import { loginSuccess, setUser, logout } from "@/store/slices/authSlice";
 import { Navigate, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export const useRegisterMutation = () => {
     return useMutation({
@@ -53,6 +54,19 @@ export const useLogoutMutation = () => {
             queryClient.clear();
 
             navigate("/login");
+        },
+    });
+};
+
+export const useUpdateProfileMutation = () => {
+    const dispatch = useDispatch();
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: updateProfile,
+        onSuccess: (data) => {
+            queryClient.setQueryData(["me"], data);
+            dispatch(setUser(data.data));
         },
     });
 };

@@ -15,32 +15,31 @@ const statConfig = [
     {
         title: "Total Bookings",
         icon: CalendarDays,
-        color: "bg-blue-100 text-blue-600 border border-blue-600 border-l-4",
+        color: "bg-sky-500/10 text-sky-400 border border-sky-500/20 border-l-4",
         filter: () => true,
-        // className: "border border-blue-600 border-l-8 ",
     },
     {
         title: "Active",
         icon: Car,
-        color: "bg-green-100 text-green-600 border border-green-600 border-l-4",
-        filter: (b) => b.bookingStatus === "Active",
+        color: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 border-l-4",
+        filter: (b) => b.bookingStatus === "Active" || b.bookingStatus === "Picked Up",
     },
     {
         title: "Upcoming",
         icon: Clock3,
-        color: "bg-yellow-100 text-yellow-600 border border-yellow-600 border-l-4",
-        filter: (b) => b.bookingStatus === "Upcoming" || b.bookingStatus === "Pending",
+        color: "bg-amber-500/10 text-amber-400 border border-amber-500/20 border-l-4",
+        filter: (b) => b.bookingStatus === "Upcoming" || b.bookingStatus === "Pending" || b.bookingStatus === "Confirmed",
     },
     {
         title: "Completed",
         icon: CheckCircle2,
-        color: "bg-slate-100 text-slate-500 border border-slate-500 border-l-4",
+        color: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 border-l-4",
         filter: (b) => b.bookingStatus === "Completed",
     },
     {
         title: "Cancelled",
         icon: XCircle,
-        color: "bg-red-100 text-red-500 border border-red-500 border-l-4",
+        color: "bg-rose-500/10 text-rose-455 text-rose-400 border border-rose-500/20 border-l-4",
         filter: (b) => b.bookingStatus === "Cancelled",
     },
 ];
@@ -56,15 +55,15 @@ export default function BookingStats({ bookings = [] }) {
                 return (
                     <Card
                         key={title}
-                        className={`transition-all bg-secondary duration-300 hover:-translate-y-1 hover:shadow-lg ${className}`}                    >
+                        className={`transition-all bg-zinc-900/30 border-zinc-800 duration-300 hover:-translate-y-1 hover:shadow-lg ${className}`}                    >
                         <CardContent className="flex items-center justify-between p-5">
                             <div>
-                                <p className="text-sm text-muted-foreground">{title}</p>
-                                <h2 className="mt-1 text-3xl font-extrabold">{count}</h2>
+                                <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">{title}</p>
+                                <h2 className="mt-1 text-2xl font-extrabold text-zinc-100">{count}</h2>
                             </div>
 
-                            <div className={`rounded-full p-3 ${color}`}>
-                                <Icon className="h-6 w-6" />
+                            <div className={`rounded-full p-2.5 ${color}`}>
+                                <Icon className="h-5 w-5" />
                             </div>
                         </CardContent>
                     </Card>

@@ -55,10 +55,10 @@ export default function CarGrid({ filters }) {
                 ))}
             </div>
 
-            <CarPagination 
-                page={data.pagination?.page || 1} 
-                totalPages={data.pagination?.totalPages || 1} 
-                onPageChange={handlePageChange} 
+            <CarPagination
+                page={data.pagination?.page || 1}
+                totalPages={data.pagination?.totalPages || 1}
+                onPageChange={handlePageChange}
             />
         </div>
     );
