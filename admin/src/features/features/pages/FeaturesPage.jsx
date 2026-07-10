@@ -86,26 +86,42 @@ export default function FeaturesPage() {
     };
 
     const renderFeatureRow = (feat) => (
-        <TableRow key={feat._id} className="border-b border-zinc-800/50 hover:bg-zinc-900/20 transition-colors">
+        <TableRow
+            key={feat._id}
+            className="border-b border-border transition-colors hover:bg-muted/40"
+        >
             <TableCell className="py-3">
-                <div className="w-10 h-10 rounded-lg border border-zinc-800 bg-zinc-900/50 flex items-center justify-center text-sky-400">
-                    <RenderFeatureIcon iconName={feat.icon} className="h-5 w-5 text-sky-400" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-card text-primary">
+                    <RenderFeatureIcon
+                        iconName={feat.icon}
+                        className="h-5 w-5 text-primary"
+                    />
                 </div>
             </TableCell>
-            <TableCell className="py-3 font-semibold text-zinc-200">
+
+            <TableCell className="py-3">
                 <div>
-                    <p>{feat.name}</p>
-                    <p className="text-xs font-normal text-zinc-500 max-w-[240px] truncate mt-0.5" title={feat.description}>
+                    <p className="font-semibold text-foreground">
+                        {feat.name}
+                    </p>
+
+                    <p
+                        title={feat.description}
+                        className="mt-0.5 max-w-[240px] truncate text-xs font-normal text-muted-foreground"
+                    >
                         {feat.description || "No description provided."}
                     </p>
                 </div>
             </TableCell>
+
             <TableCell className="py-3">
                 <StatusBadge status={feat.isActive} type="active" />
             </TableCell>
-            <TableCell className="py-3 text-zinc-400 font-medium">
+
+            <TableCell className="py-3 font-medium text-muted-foreground">
                 <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-zinc-500" />
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+
                     {new Date(feat.createdAt).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
@@ -113,6 +129,7 @@ export default function FeaturesPage() {
                     })}
                 </div>
             </TableCell>
+
             <TableCell className="py-3">
                 <div className="flex items-center gap-2">
                     <Button
@@ -122,15 +139,16 @@ export default function FeaturesPage() {
                             setEditingFeature(feat);
                             setIsFormOpen(true);
                         }}
-                        className="h-8 w-8 text-zinc-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg transition-all"
+                        className="h-8 w-8 rounded-lg text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
                     >
                         <Edit className="h-4 w-4" />
                     </Button>
+
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => setDeletingBrand(feat)}
-                        className="h-8 w-8 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
+                        className="h-8 w-8 rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                     >
                         <Trash2 className="h-4 w-4" />
                     </Button>
@@ -140,14 +158,15 @@ export default function FeaturesPage() {
     );
 
     return (
-        <div className="p-8 space-y-6 max-w-7xl mx-auto">
+        <div className="mx-auto max-w-7xl space-y-6 p-8">
             {/* Header section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400">
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground">
                         Feature Management
                     </h1>
-                    <p className="text-sm text-zinc-400">
+
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Define specifications and comforts (e.g. WiFi, Airbags, GPS) available for fleet cars.
                     </p>
                 </div>
@@ -155,7 +174,13 @@ export default function FeaturesPage() {
 
             {/* Reusable table component */}
             <MasterTable
-                headers={["Icon", "Feature & Description", "Status", "Created At", "Actions"]}
+                headers={[
+                    "Icon",
+                    "Feature & Description",
+                    "Status",
+                    "Created At",
+                    "Actions",
+                ]}
                 data={paginatedFeatures}
                 isLoading={isLoading}
                 searchQuery={searchQuery}
@@ -172,9 +197,9 @@ export default function FeaturesPage() {
                             setEditingFeature(null);
                             setIsFormOpen(true);
                         }}
-                        className="h-10 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-sky-500/10 active:scale-[0.98] transition-all"
+                        className="h-10 rounded-lg bg-primary text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary/90 active:scale-[0.98]"
                     >
-                        <Plus className="h-5 w-5 mr-1" />
+                        <Plus className="mr-1 h-5 w-5" />
                         Add Feature
                     </Button>
                 }
@@ -188,12 +213,13 @@ export default function FeaturesPage() {
                     if (!open) setEditingFeature(null);
                 }}
             >
-                <SheetContent className="bg-zinc-950 border-l border-zinc-800 text-zinc-100 max-w-md w-full p-6">
+                <SheetContent className="w-full max-w-md border-l border-border bg-background p-6">
                     <SheetHeader className="mb-6">
-                        <SheetTitle className="text-zinc-100 font-bold text-xl">
+                        <SheetTitle className="text-2xl font-semibold text-foreground">
                             {editingFeature ? "Edit Feature" : "Add Feature"}
                         </SheetTitle>
-                        <SheetDescription className="text-zinc-400 text-sm">
+
+                        <SheetDescription className="text-sm text-muted-foreground">
                             Configure standard vehicle feature name, visual icon, and status constraints.
                         </SheetDescription>
                     </SheetHeader>
@@ -213,7 +239,7 @@ export default function FeaturesPage() {
             {/* Deletion confirmation dialog */}
             <DeleteDialog
                 isOpen={!!deletingFeature}
-                onClose={() => setDeletingBrand(null)}
+                onClose={() => setDeletingFeature(null)}
                 onConfirm={handleDeleteConfirm}
                 isDeleting={isDeleting}
                 title={`Delete ${deletingFeature?.name}?`}

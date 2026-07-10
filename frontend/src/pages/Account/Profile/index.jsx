@@ -87,12 +87,18 @@ export default function Profile() {
     }
 
     return (
-        <div className="space-y-6 text-zinc-100">
-            <div className="flex justify-between items-center border-b border-zinc-800 pb-4">
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-border pb-4">
                 <div>
-                    <h3 className="text-xl font-bold tracking-tight">Renter Profile</h3>
-                    <p className="text-sm text-zinc-400">Manage your credentials and contact information.</p>
+                    <h3 className="text-xl font-bold tracking-tight text-foreground">
+                        Renter Profile
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                        Manage your credentials and contact information.
+                    </p>
                 </div>
+
                 {!isEditing && (
                     <Button
                         onClick={() => {
@@ -105,129 +111,184 @@ export default function Profile() {
                                 newPassword: "",
                             });
                         }}
-                        className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-750 text-zinc-300 font-semibold gap-1.5 h-10 text-xs rounded-lg"
+                        className="h-10 gap-1.5 rounded-lg border border-border bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground"
                     >
-                        <Edit2 size={13} />
+                        <Edit2 size={14} />
                         Edit Profile
                     </Button>
                 )}
             </div>
 
             {!isEditing ? (
-                <div className="grid gap-6">
-                    <Card className="border-zinc-800 bg-zinc-900/10 backdrop-blur-md">
-                        <CardContent className="p-6 space-y-5">
-                            <div className="flex items-center gap-4">
-                                <div className="h-14 w-14 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-500 flex items-center justify-center text-white text-xl font-bold border border-zinc-800">
-                                    {user.name ? user.name[0].toUpperCase() : "U"}
-                                </div>
-                                <div>
-                                    <h4 className="text-lg font-bold text-zinc-200">{user.name}</h4>
-                                    <span className="text-xs bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                                        {user.role} Member
-                                    </span>
-                                </div>
+                <Card className="border-border bg-card shadow-sm">
+                    <CardContent className="space-y-5 p-6">
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-xl font-bold text-primary-foreground">
+                                {user.name ? user.name[0].toUpperCase() : "U"}
                             </div>
 
-                            <hr className="border-zinc-800" />
+                            <div>
+                                <h4 className="text-lg font-semibold text-card-foreground">
+                                    {user.name}
+                                </h4>
 
-                            <div className="grid gap-4 sm:grid-cols-2 text-sm">
-                                <ProfileDetailItem
-                                    icon={<Mail className="h-4.5 w-4.5 text-zinc-500" />}
-                                    label="Email Address"
-                                    value={user.email}
-                                />
-                                <ProfileDetailItem
-                                    icon={<Phone className="h-4.5 w-4.5 text-zinc-500" />}
-                                    label="Phone Number"
-                                    value={user.phone || "—"}
-                                />
+                                <span className="rounded-md bg-accent px-2 py-1 text-xs font-semibold uppercase tracking-wider text-accent-foreground">
+                                    {user.role} Member
+                                </span>
                             </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                        </div>
+
+                        <hr className="border-border" />
+
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <ProfileDetailItem
+                                icon={
+                                    <Mail className="h-4.5 w-4.5 text-muted-foreground" />
+                                }
+                                label="Email Address"
+                                value={user.email}
+                            />
+
+                            <ProfileDetailItem
+                                icon={
+                                    <Phone className="h-4.5 w-4.5 text-muted-foreground" />
+                                }
+                                label="Phone Number"
+                                value={user.phone || "—"}
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
             ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    <Card className="border-zinc-800 bg-zinc-900/10 backdrop-blur-md p-6">
-                        <CardContent className="p-0 space-y-4">
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="space-y-6"
+                >
+                    <Card className="border-border bg-card shadow-sm">
+                        <CardContent className="space-y-5 p-6">
                             <div className="grid gap-4 sm:grid-cols-2">
-                                <div className="space-y-1.5">
-                                    <Label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Full Name</Label>
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                        Full Name
+                                    </Label>
+
                                     <Input
-                                        className="bg-zinc-950 border-zinc-800 focus:border-zinc-700 text-zinc-150 h-11"
-                                        placeholder="Enter full name"
                                         {...register("name")}
+                                        placeholder="Enter full name"
+                                        className="h-11 border-input bg-background"
                                     />
-                                    {errors.name && <p className="text-xs text-rose-500">{errors.name.message}</p>}
+
+                                    {errors.name && (
+                                        <p className="text-xs text-destructive">
+                                            {errors.name.message}
+                                        </p>
+                                    )}
                                 </div>
 
-                                <div className="space-y-1.5">
-                                    <Label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Email Address</Label>
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                        Email Address
+                                    </Label>
+
                                     <Input
-                                        className="bg-zinc-950 border-zinc-800 focus:border-zinc-700 text-zinc-150 h-11"
-                                        placeholder="name@example.com"
                                         {...register("email")}
+                                        placeholder="name@example.com"
+                                        className="h-11 border-input bg-background"
                                     />
-                                    {errors.email && <p className="text-xs text-rose-500">{errors.email.message}</p>}
+
+                                    {errors.email && (
+                                        <p className="text-xs text-destructive">
+                                            {errors.email.message}
+                                        </p>
+                                    )}
                                 </div>
 
-                                <div className="space-y-1.5">
-                                    <Label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Phone Number</Label>
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                        Phone Number
+                                    </Label>
+
                                     <Input
-                                        className="bg-zinc-950 border-zinc-800 focus:border-zinc-700 text-zinc-150 h-11"
-                                        placeholder="Phone number"
                                         {...register("phone")}
+                                        placeholder="Phone Number"
+                                        className="h-11 border-input bg-background"
                                     />
-                                    {errors.phone && <p className="text-xs text-rose-500">{errors.phone.message}</p>}
+
+                                    {errors.phone && (
+                                        <p className="text-xs text-destructive">
+                                            {errors.phone.message}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
-                            <hr className="border-zinc-800 my-4" />
-                            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-widest pb-1">Change Password (Optional)</h4>
+                            <hr className="border-border" />
+
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                                Change Password (Optional)
+                            </h4>
 
                             <div className="grid gap-4 sm:grid-cols-2">
-                                <div className="space-y-1.5">
-                                    <Label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Current Password</Label>
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                        Current Password
+                                    </Label>
+
                                     <Input
                                         type="password"
-                                        className="bg-zinc-950 border-zinc-800 focus:border-zinc-700 text-zinc-150 h-11"
-                                        placeholder="Enter current password"
                                         {...register("currentPassword")}
+                                        placeholder="Current Password"
+                                        className="h-11 border-input bg-background"
                                     />
-                                    {errors.currentPassword && <p className="text-xs text-rose-500">{errors.currentPassword.message}</p>}
+
+                                    {errors.currentPassword && (
+                                        <p className="text-xs text-destructive">
+                                            {errors.currentPassword.message}
+                                        </p>
+                                    )}
                                 </div>
 
-                                <div className="space-y-1.5">
-                                    <Label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">New Password</Label>
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                        New Password
+                                    </Label>
+
                                     <Input
                                         type="password"
-                                        className="bg-zinc-950 border-zinc-800 focus:border-zinc-700 text-zinc-150 h-11"
-                                        placeholder="Enter new password"
                                         {...register("newPassword")}
+                                        placeholder="New Password"
+                                        className="h-11 border-input bg-background"
                                     />
-                                    {errors.newPassword && <p className="text-xs text-rose-500">{errors.newPassword.message}</p>}
+
+                                    {errors.newPassword && (
+                                        <p className="text-xs text-destructive">
+                                            {errors.newPassword.message}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <div className="flex items-center justify-end gap-3">
+                    <div className="flex justify-end gap-3">
                         <Button
                             type="button"
                             variant="outline"
                             onClick={() => setIsEditing(false)}
-                            className="h-11 border-zinc-800 bg-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 rounded-lg text-xs font-semibold"
+                            className="h-11"
                         >
                             Cancel
                         </Button>
+
                         <Button
                             type="submit"
                             disabled={updateProfileMutation.isPending}
-                            className="h-11 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold rounded-lg shadow-lg hover:shadow-sky-500/10 transition-all text-xs"
+                            className="h-11 bg-primary text-primary-foreground hover:opacity-90"
                         >
                             {updateProfileMutation.isPending ? (
-                                <span className="flex items-center gap-1.5">
-                                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving...
+                                <span className="flex items-center gap-2">
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    Saving...
                                 </span>
                             ) : (
                                 "Save Profile"
@@ -242,11 +303,12 @@ export default function Profile() {
 
 function ProfileDetailItem({ icon, label, value }) {
     return (
-        <div className="flex items-start gap-3 bg-zinc-950/40 p-4 rounded-xl border border-zinc-805 border-zinc-800/80">
-            <div className="mt-0.5">{icon}</div>
+        <div className="flex items-start gap-3 rounded-xl border border-border bg-muted/40 p-4">
+            <div className="mt-0.5 text-muted-foreground">{icon}</div>
+
             <div>
-                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{label}</p>
-                <p className="font-semibold text-zinc-300 mt-0.5">{value}</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{label}</p>
+                <p className="mt-0.5 font-semibold text-foreground">{value}</p>
             </div>
         </div>
     );

@@ -18,57 +18,96 @@ export default function Bookings() {
     );
 
     return (
-        <div className="space-y-6 text-zinc-100">
-            <div className="flex justify-between items-center border-b border-zinc-800 pb-4">
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-border pb-4">
                 <div>
-                    <h3 className="text-xl font-bold tracking-tight">My Reservations</h3>
-                    <p className="text-sm text-zinc-450 text-zinc-450 text-zinc-400">View and track your rental bookings history.</p>
+                    <h3 className="text-xl font-bold tracking-tight text-foreground">
+                        My Reservations
+                    </h3>
+
+                    <p className="text-sm text-muted-foreground">
+                        View and track your rental bookings history.
+                    </p>
                 </div>
+
                 <Button
                     variant="outline"
                     onClick={() => refetch()}
-                    className="border-zinc-800 bg-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 transition-all gap-1.5 h-10 text-xs font-semibold"
+                    className="h-10 gap-1.5"
                 >
                     <RefreshCw size={13} />
                     Sync
                 </Button>
             </div>
 
+            {/* Loading */}
             {isLoading ? (
-                <div className="flex flex-col items-center justify-center py-20 gap-3">
-                    <Loader2 size={36} className="animate-spin text-sky-500" />
-                    <p className="text-sm text-zinc-400 font-medium animate-pulse">Loading bookings...</p>
+                <div className="flex flex-col items-center justify-center gap-3 py-20">
+                    <Loader2
+                        size={36}
+                        className="animate-spin text-primary"
+                    />
+
+                    <p className="animate-pulse text-sm font-medium text-muted-foreground">
+                        Loading bookings...
+                    </p>
                 </div>
             ) : isError ? (
-                <div className="flex flex-col items-center justify-center py-12 gap-3 text-center max-w-sm mx-auto">
-                    <CalendarX size={36} className="text-rose-500" />
-                    <h4 className="text-base font-bold text-zinc-200">Failed to load reservations</h4>
-                    <p className="text-xs text-zinc-500">We couldn't retrieve your list of bookings. Please try again.</p>
-                    <Button onClick={() => refetch()} className="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200">
+                /* Error */
+                <div className="mx-auto flex max-w-sm flex-col items-center justify-center gap-3 py-12 text-center">
+                    <CalendarX
+                        size={36}
+                        className="text-destructive"
+                    />
+
+                    <h4 className="text-base font-bold text-foreground">
+                        Failed to load reservations
+                    </h4>
+
+                    <p className="text-xs text-muted-foreground">
+                        We couldn't retrieve your list of bookings. Please try again.
+                    </p>
+
+                    <Button
+                        onClick={() => refetch()}
+                        className="w-full bg-primary text-primary-foreground hover:opacity-90"
+                    >
                         Try Again
                     </Button>
                 </div>
             ) : (
-                <Tabs defaultValue="current" className="w-full">
-                    <TabsList className="bg-zinc-950 border border-zinc-850 border-zinc-800 w-full p-1 rounded-xl grid grid-cols-2 mb-6">
+                <Tabs
+                    defaultValue="current"
+                    className="flex w-full flex-col"
+                >
+                    <TabsList className="mb-6 grid w-full grid-cols-2 rounded-xl border border-border bg-muted p-1">
                         <TabsTrigger
                             value="current"
-                            className="rounded-lg text-xs font-semibold py-2.5 data-[state=active]:bg-zinc-900 data-[state=active]:text-sky-400 data-[state=active]:border data-[state=active]:border-zinc-800 transition-all"
+                            className="rounded-lg py-2.5 text-xs font-semibold transition-all data-[state=active]:border data-[state=active]:border-border data-[state=active]:bg-background data-[state=active]:text-primary"
                         >
                             Active & Upcoming ({currentBookings.length})
                         </TabsTrigger>
+
                         <TabsTrigger
                             value="past"
-                            className="rounded-lg text-xs font-semibold py-2.5 data-[state=active]:bg-zinc-900 data-[state=active]:text-sky-400 data-[state=active]:border data-[state=active]:border-zinc-800 transition-all"
+                            className="rounded-lg py-2.5 text-xs font-semibold transition-all data-[state=active]:border data-[state=active]:border-border data-[state=active]:bg-background data-[state=active]:text-primary"
                         >
                             Past History ({pastBookings.length})
                         </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="current" className="space-y-4 focus-visible:outline-none">
+                    <TabsContent
+                        value="current"
+                        className="space-y-4 focus-visible:outline-none"
+                    >
                         {currentBookings.map((booking) => (
-                            <BookingCard key={booking._id} booking={booking} />
+                            <BookingCard
+                                key={booking._id}
+                                booking={booking}
+                            />
                         ))}
+
                         {currentBookings.length === 0 && (
                             <EmptyDashboardState
                                 message="No active or upcoming reservations found."
@@ -78,10 +117,17 @@ export default function Bookings() {
                         )}
                     </TabsContent>
 
-                    <TabsContent value="past" className="space-y-4 focus-visible:outline-none">
+                    <TabsContent
+                        value="past"
+                        className="space-y-4 focus-visible:outline-none"
+                    >
                         {pastBookings.map((booking) => (
-                            <BookingCard key={booking._id} booking={booking} />
+                            <BookingCard
+                                key={booking._id}
+                                booking={booking}
+                            />
                         ))}
+
                         {pastBookings.length === 0 && (
                             <EmptyDashboardState
                                 message="No rental history entries found."
