@@ -48,21 +48,30 @@ export default function BookingStats({ bookings = [] }) {
     return (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {statConfig.map(({ title, icon: Icon, color, filter, className }) => {
-                const count = title === "Total Bookings"
-                    ? bookings.length
-                    : bookings.filter(filter).length;
+                const count =
+                    title === "Total Bookings"
+                        ? bookings.length
+                        : bookings.filter(filter).length;
 
                 return (
                     <Card
                         key={title}
-                        className={`transition-all bg-zinc-900/30 border-zinc-800 duration-300 hover:-translate-y-1 hover:shadow-lg ${className}`}                    >
+                        className={`bg-card border-border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${className}`}
+                    >
                         <CardContent className="flex items-center justify-between p-5">
                             <div>
-                                <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">{title}</p>
-                                <h2 className="mt-1 text-2xl font-extrabold text-zinc-100">{count}</h2>
+                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                    {title}
+                                </p>
+
+                                <h2 className="mt-1 text-2xl font-extrabold text-foreground">
+                                    {count}
+                                </h2>
                             </div>
 
-                            <div className={`rounded-full p-2.5 ${color}`}>
+                            <div
+                                className={`rounded-full p-2.5 ${color}`}
+                            >
                                 <Icon className="h-5 w-5" />
                             </div>
                         </CardContent>

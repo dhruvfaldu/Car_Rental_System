@@ -7,6 +7,8 @@ import CategoriesPage from "@/features/categories/pages/CategoriesPage";
 import FeaturesPage from "@/features/features/pages/FeaturesPage";
 import CarsPage from "@/features/cars/pages/CarsPage";
 import BookingsPage from "@/features/bookings/pages/BookingsPage";
+import UsersPage from "@/features/users/pages/UsersPage";
+import InvoicesPage from "@/features/invoices/pages/InvoicesPage";
 import ProtectedRoute from "./ProtectedRoute";
 import DashboardLayout from "@/layouts/DashboardLayout";
 
@@ -27,6 +29,8 @@ function AppRoutes() {
                         <Route path="/features" element={<FeaturesPage />} />
                         <Route path="/cars" element={<CarsPage />} />
                         <Route path="/bookings" element={<BookingsPage />} />
+                        <Route path="/users" element={<UsersPage />} />
+                        <Route path="/invoices" element={<InvoicesPage />} />
                         
                         {/* Catch-all fallback */}
                         <Route path="*" element={<Navigate to="/" replace />} />

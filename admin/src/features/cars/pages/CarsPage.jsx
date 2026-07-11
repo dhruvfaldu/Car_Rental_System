@@ -103,52 +103,72 @@ export default function CarsPage() {
     };
 
     const renderCarRow = (car) => (
-        <TableRow key={car._id} className="border-b border-zinc-800/50 hover:bg-zinc-900/20 transition-colors">
+        <TableRow
+            key={car._id}
+            className="border-b border-border hover:bg-muted/50 transition-colors"
+        >
             <TableCell className="py-3">
-                <div className="w-16 h-11 rounded-lg border border-zinc-800 bg-zinc-950 flex items-center justify-center p-1 overflow-hidden">
+                <div className="w-16 h-11 rounded-lg border border-border bg-muted flex items-center justify-center p-1 overflow-hidden">
                     {car.images?.[0]?.secure_url ? (
                         <img
                             src={car.images[0].secure_url}
-                            alt={`${car.name}`}
+                            alt={car.name}
                             className="max-w-full max-h-full object-contain"
                         />
                     ) : (
-                        <span className="text-[10px] text-zinc-600 font-bold uppercase">NO IMG</span>
+                        <span className="text-[10px] font-bold uppercase text-muted-foreground">
+                            NO IMG
+                        </span>
                     )}
                 </div>
             </TableCell>
-            <TableCell className="py-3 font-semibold text-zinc-200">
+
+            <TableCell className="py-3">
                 <div>
-                    <p className="text-sm">{car.name}</p>
-                    <p className="text-xs font-normal text-zinc-500 mt-0.5">
+                    <p className="text-sm font-semibold text-foreground">
+                        {car.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
                         {car.registrationNumber} • {car.year}
                     </p>
                 </div>
             </TableCell>
+
             <TableCell className="py-3">
-                <span className="inline-flex items-center rounded-md bg-zinc-800 px-2 py-1 text-xs font-medium text-zinc-300 ring-1 ring-inset ring-zinc-700">
+                <span className="inline-flex items-center rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium text-foreground">
                     {car.brand?.name || "N/A"}
                 </span>
             </TableCell>
+
             <TableCell className="py-3">
-                <span className="inline-flex items-center rounded-md bg-zinc-800/40 px-2 py-1 text-xs font-medium text-sky-400 ring-1 ring-inset ring-sky-500/20">
+                <span className="inline-flex items-center rounded-md border border-border bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground">
                     {car.category?.name || "N/A"}
                 </span>
             </TableCell>
-            <TableCell className="py-3 font-semibold text-zinc-200">
-                <div className="flex items-center text-xs">
-                    <IndianRupee className="h-3 w-3 mr-0.5 text-zinc-400" />
+
+            <TableCell className="py-3">
+                <div className="flex items-center text-sm font-semibold text-foreground">
+                    <IndianRupee className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
                     {car.pricePerDay}/day
                 </div>
             </TableCell>
+
             <TableCell className="py-3">
-                <StatusBadge status={car.status} type="car-status" />
+                <StatusBadge
+                    status={car.status}
+                    type="car-status"
+                />
             </TableCell>
+
             <TableCell className="py-3">
-                <StatusBadge status={car.isActive} type="active" />
+                <StatusBadge
+                    status={car.isActive}
+                    type="active"
+                />
             </TableCell>
+
             <TableCell className="py-3">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
                     <Button
                         variant="ghost"
                         size="icon"
@@ -156,15 +176,16 @@ export default function CarsPage() {
                             setEditingCar(car);
                             setIsFormOpen(true);
                         }}
-                        className="h-8 w-8 text-zinc-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg"
+                        className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                     >
                         <Edit className="h-4 w-4" />
                     </Button>
+
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => setDeletingCar(car)}
-                        className="h-8 w-8 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg"
+                        className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
                     >
                         <Trash2 className="h-4 w-4" />
                     </Button>
@@ -178,60 +199,75 @@ export default function CarsPage() {
             {/* Header section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400">
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground">
                         Fleet Management
                     </h1>
-                    <p className="text-sm text-zinc-400">
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Review, modify, and manage car listings. Add up to 5 images per vehicle.
                     </p>
                 </div>
             </div>
 
-            {/* Filter toolbar components */}
+            {/* Filter Toolbar */}
             <div className="flex flex-wrap items-center gap-3">
-                {/* Brand filter */}
+                {/* Brand Filter */}
                 <Select value={selectedBrand} onValueChange={handleBrandFilterChange}>
-                    <SelectTrigger className="w-[140px] h-10 bg-zinc-900/50 border-zinc-800 text-zinc-300 rounded-lg text-xs">
+                    <SelectTrigger className="w-[160px] h-10 bg-background border-border text-foreground rounded-lg">
                         <SelectValue placeholder="All Brands" />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-100">
+                    <SelectContent className="bg-popover border-border text-popover-foreground">
                         <SelectItem value="all">All Brands</SelectItem>
-                        {brands.map(b => (
-                            <SelectItem key={b._id} value={b._id}>{b.name}</SelectItem>
+                        {brands.map((b) => (
+                            <SelectItem key={b._id} value={b._id}>
+                                {b.name}
+                            </SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
 
-                {/* Category filter */}
+                {/* Category Filter */}
                 <Select value={selectedCategory} onValueChange={handleCategoryFilterChange}>
-                    <SelectTrigger className="w-[140px] h-10 bg-zinc-900/50 border-zinc-800 text-zinc-300 rounded-lg text-xs">
+                    <SelectTrigger className="w-[160px] h-10 bg-background border-border text-foreground rounded-lg">
                         <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-100">
+                    <SelectContent className="bg-popover border-border text-popover-foreground">
                         <SelectItem value="all">All Categories</SelectItem>
-                        {categories.map(c => (
-                            <SelectItem key={c._id} value={c._id}>{c.name}</SelectItem>
+                        {categories.map((c) => (
+                            <SelectItem key={c._id} value={c._id}>
+                                {c.name}
+                            </SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
 
-                {/* Status filter */}
+                {/* Status Filter */}
                 <Select value={selectedStatus} onValueChange={handleStatusFilterChange}>
-                    <SelectTrigger className="w-[140px] h-10 bg-zinc-900/50 border-zinc-800 text-zinc-300 rounded-lg text-xs">
+                    <SelectTrigger className="w-[160px] h-10 bg-background border-border text-foreground rounded-lg">
                         <SelectValue placeholder="All Statuses" />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-100">
+                    <SelectContent className="bg-popover border-border text-popover-foreground">
                         <SelectItem value="all">All Statuses</SelectItem>
-                        {["Available", "Booked", "Rented", "Maintenance"].map(status => (
-                            <SelectItem key={status} value={status}>{status}</SelectItem>
+                        {["Available", "Booked", "Rented", "Maintenance"].map((status) => (
+                            <SelectItem key={status} value={status}>
+                                {status}
+                            </SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
             </div>
 
-            {/* Reusable master table */}
+            {/* Master Table */}
             <MasterTable
-                headers={["Image", "Model & Details", "Brand", "Category", "Rate", "Status", "Active", "Actions"]}
+                headers={[
+                    "Image",
+                    "Model & Details",
+                    "Brand",
+                    "Category",
+                    "Rate",
+                    "Status",
+                    "Active",
+                    "Actions",
+                ]}
                 data={cars}
                 isLoading={isLoading}
                 searchQuery={searchQuery}
@@ -248,15 +284,15 @@ export default function CarsPage() {
                             setEditingCar(null);
                             setIsFormOpen(true);
                         }}
-                        className="h-10 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-sky-500/10 active:scale-[0.98] transition-all"
+                        className="h-11 rounded-lg bg-primary text-primary-foreground hover:opacity-90 font-medium shadow-sm"
                     >
-                        <Plus className="h-5 w-5 mr-1" />
+                        <Plus className="h-4 w-4 mr-2" />
                         Add Vehicle
                     </Button>
                 }
             />
 
-            {/* Sheet Form (Drawer) */}
+            {/* Vehicle Form Drawer */}
             <Sheet
                 open={isFormOpen}
                 onOpenChange={(open) => {
@@ -264,13 +300,14 @@ export default function CarsPage() {
                     if (!open) setEditingCar(null);
                 }}
             >
-                <SheetContent className="bg-zinc-950 border-l border-zinc-800 text-zinc-100 max-w-5xl w-full sm:max-w-2xl p-4">
+                <SheetContent className="w-full sm:max-w-2xl bg-card border-l border-border text-card-foreground p-6">
                     <SheetHeader className="mb-6">
-                        <SheetTitle className="text-zinc-100 font-bold text-xl">
+                        <SheetTitle className="text-2xl font-semibold text-card-foreground">
                             {editingCar ? "Edit Vehicle" : "Add Vehicle"}
                         </SheetTitle>
-                        <SheetDescription className="text-zinc-400 text-sm">
-                            Configure standard fleet listing parameters, select equipment/specs, and manage attachments.
+
+                        <SheetDescription className="text-muted-foreground">
+                            Configure vehicle information, pricing, features and images.
                         </SheetDescription>
                     </SheetHeader>
 
@@ -288,7 +325,7 @@ export default function CarsPage() {
                 </SheetContent>
             </Sheet>
 
-            {/* Deletion confirmation dialog */}
+            {/* Delete Dialog */}
             <DeleteDialog
                 isOpen={!!deletingCar}
                 onClose={() => setDeletingCar(null)}
