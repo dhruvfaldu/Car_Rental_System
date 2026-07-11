@@ -213,7 +213,7 @@ export default function Booking() {
                         <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
                             Book Your Ride
                         </h1>
-                        <p className="text-muted-foreground text-sm mt-1">
+                        <p className="text-zinc-400 text-sm mt-1">
                             Complete your booking details and reserve your luxury vehicle.
                         </p>
                     </div>

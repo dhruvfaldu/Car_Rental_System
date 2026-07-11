@@ -253,7 +253,7 @@ export default function BookingCard({ booking }) {
                                         This action cannot be undone. Funds paid online will be credited back depending on merchant timelines.
                                     </p>
                                 </div>
-                            </div>
+                             </div>
 
                             <form onSubmit={handleCancelSubmit} className="p-5 space-y-4">
                                 <div className="space-y-1.5">
