@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
     CarFront,
     Home,
@@ -39,7 +39,6 @@ const navLinks = [
 export default function Navbar() {
     const { mutate: logoutUser, isPending } = useLogoutMutation();
     const { user, isAuthenticated } = useSelector((state) => state.auth);
-    const navigate = useNavigate();
 
     return (
         <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl shadow-sm transition-shadow">
