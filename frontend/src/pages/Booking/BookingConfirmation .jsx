@@ -1,348 +1,305 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
 import {
     CheckCircle2,
     Calendar,
     MapPin,
     CreditCard,
     Receipt,
-    Car,
-    Loader2,
-    AlertCircle,
-    Home,
-    BookOpen,
-    Printer,
+    Sparkles,
     ShieldCheck,
-    Coins,
-    Lock,
+    ArrowRight,
+    Home,
+    FileText,
+    Loader2
 } from "lucide-react";
-import { useBookingDetails } from "@/features/booking/useBookingMutation";
+import { getBookingById } from "@/features/booking/bookingApi";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { processRazorpayPayment } from "@/utils/razorpay";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 const fallbackImage =
     "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800";
 
-const statusColors = {
-    Pending:   "bg-amber-50 text-amber-700 border-amber-200",
-    Confirmed: "bg-emerald-50 text-emerald-700 border-emerald-255",
-    Active:    "bg-indigo-50 text-indigo-755 border-indigo-200",
-    Completed: "bg-slate-50 text-slate-600 border-slate-200",
-    Cancelled: "bg-rose-50 text-rose-700 border-rose-200",
-};
-
 export default function BookingConfirmation() {
     const { bookingId } = useParams();
     const navigate = useNavigate();
-    const { user } = useSelector((state) => state.auth);
 
-    const [paymentPending, setPaymentPending] = useState(false);
+    // Fetch booking details using React Query
+    const { data: bookingData, isLoading, error } = useQuery({
+        queryKey: ["booking", bookingId],
+        queryFn: async () => {
+            const res = await getBookingById(bookingId);
+            return res.data;
+        },
+        enabled: !!bookingId,
+    });
 
-    // Using TanStack React Query for details & refetching
-    const {
-        data: bookingRes,
-        isLoading,
-        isError,
-        refetch,
-    } = useBookingDetails(bookingId);
+    const booking = bookingData;
 
-    const booking = bookingRes?.data;
+    useEffect(() => {
+        if (error) {
+            toast.error("Failed to load booking details.");
+        }
+    }, [error]);
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-slate-50">
-                <Loader2 size={44} className="animate-spin text-indigo-650" />
-                <p className="text-muted-foreground font-medium animate-pulse">Loading reservation status...</p>
+            <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                    <p className="text-muted-foreground font-medium animate-pulse">Fetching confirmation details...</p>
+                </div>
             </div>
         );
     }
 
-    if (isError || !booking) {
+    if (!booking) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-slate-50">
-                <AlertCircle size={44} className="text-rose-500" />
-                <p className="text-lg font-semibold text-slate-800">Booking details not found.</p>
-                <Button asChild bg="indigo-600">
-                    <Link to="/">Go Home</Link>
-                </Button>
+            <div className="min-h-screen flex items-center justify-center bg-background px-4">
+                <Card className="p-8 text-center max-w-md w-full border border-border bg-card rounded-2xl shadow-xl">
+                    <FileText className="mx-auto text-rose-500 w-12 h-12 mb-4 animate-bounce" />
+                    <h2 className="text-xl font-bold text-foreground">Booking Not Found</h2>
+                    <p className="text-muted-foreground mt-2 text-sm">We couldn't locate the booking details you're looking for.</p>
+                    <Button onClick={() => navigate("/")} className="mt-6 w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl">
+                        Back to Home
+                    </Button>
+                </Card>
             </div>
         );
     }
 
-    const statusClass = statusColors[booking.bookingStatus] ?? "bg-slate-100 text-slate-600";
-    
-    // Check if the booking needs online payment and isn't paid yet
-    const needsPayment = 
-        (booking.paymentMethod === "Online" || booking.paymentMethod === "Card") &&
-        (!booking.payment || booking.payment.status !== "Paid") &&
-        booking.bookingStatus !== "Cancelled";
-
-    const triggerPayment = () => {
-        if (!booking) return;
-        processRazorpayPayment({
-            bookingId: booking._id,
-            amount: booking.totalAmount,
-            user,
-            onPending: (isPending) => setPaymentPending(isPending),
-            onSuccess: (paymentData) => {
-                refetch();
-            },
-            onError: () => {
-                // error is already shown by helper
-            }
+    const formatDate = (dateStr) => {
+        return new Date(dateStr).toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+            year: "numeric"
         });
     };
 
     return (
-        <main className="bg-slate-50/50 min-h-screen py-8 md:py-12">
-            <div className="container mx-auto max-w-5xl px-4 space-y-8">
-                
-                {/* Status card banner */}
+        <main className="bg-background text-foreground min-h-screen py-12">
+            <div className="container mx-auto max-w-6xl px-4">
                 <motion.div
-                    initial={{ opacity: 0, y: -15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
                 >
-                    <Card className="overflow-hidden border-slate-200/80 shadow-md bg-white">
-                        {needsPayment ? (
-                            <div className="h-1.5 bg-gradient-to-r from-amber-400 to-orange-500" />
-                        ) : (
-                            <div className="h-1.5 bg-gradient-to-r from-emerald-400 via-teal-500 to-indigo-500" />
-                        )}
-
-                        <div className="px-6 py-8 md:px-8 text-center space-y-4">
-                            <div className="flex justify-center">
-                                {needsPayment ? (
-                                    <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-amber-100 ring-8 ring-amber-50">
-                                        <Lock size={36} className="text-amber-600" />
-                                    </div>
-                                ) : (
-                                    <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 ring-8 ring-emerald-50">
-                                        <CheckCircle2 size={44} className="text-emerald-600 animate-[bounce_0.6s_ease-out_1]" />
-                                    </div>
-                                )}
-                            </div>
-
-                            <div>
-                                <h1 className="text-2xl md:text-3xl font-black text-slate-900">
-                                    {needsPayment ? "Booking Created — Payment Awaiting" : "Booking Successfully Confirmed! 🎉"}
-                                </h1>
-                                <p className="text-muted-foreground text-sm mt-1.5 max-w-md mx-auto">
-                                    {needsPayment 
-                                        ? "Complete your payment securely below to guarantee your premium car reservation."
-                                        : "Your reservation has been approved and logged. Safe travels!"}
-                                </p>
-                            </div>
-
-                            <div className="inline-flex flex-wrap items-center justify-center gap-3 rounded-full border bg-slate-50 px-5 py-2">
-                                <Receipt size={14} className="text-slate-400" />
-                                <span className="text-xs text-slate-500 font-medium">Reservation Ref:</span>
-                                <span className="text-xs font-mono font-bold text-slate-800">{booking.bookingNumber}</span>
-                                <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${statusClass}`}>
-                                    {booking.bookingStatus}
-                                </span>
-                            </div>
+                    <Card className="p-8 md:p-10 mb-10 text-center bg-card border border-border shadow-lg rounded-3xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-500" />
+                        
+                        <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+                            className="mx-auto w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20 shadow-inner"
+                        >
+                            <CheckCircle2 className="text-emerald-500 w-9 h-9" />
+                        </motion.div>
+ 
+                        <h1 className="text-3xl font-extrabold text-foreground tracking-tight mt-6">
+                            Booking Submitted!
+                        </h1>
+ 
+                        <p className="text-muted-foreground mt-2 max-w-md mx-auto text-sm">
+                            {booking.paymentMethod === "Cash"
+                                ? "Your reservation is pending admin approval. You can pay physically in cash at pickup."
+                                : "Your booking is confirmed! We have received your payment."}
+                        </p>
+ 
+                        <div className="mt-8 inline-flex items-center gap-3 bg-muted border border-border rounded-full px-5 py-2">
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Booking Number</span>
+                            <div className="w-1.5 h-1.5 bg-emerald-555 bg-emerald-400 rounded-full" />
+                            <span className="font-mono font-bold text-foreground text-sm">
+                                {booking.bookingNumber}
+                            </span>
                         </div>
                     </Card>
                 </motion.div>
 
-                {/* Main 2-column layout */}
-                <div className="grid lg:grid-cols-5 gap-8">
-                    
-                    {/* Left: Info Grid & payment options */}
-                    <div className="lg:col-span-3 space-y-6">
-                        <AnimatePresence mode="wait">
-                            {needsPayment && (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.98 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.98 }}
-                                    transition={{ duration: 0.25 }}
-                                >
-                                    <Card className="p-6 border-amber-250 bg-amber-50/20 shadow-md shadow-amber-50/10 space-y-4">
-                                        <div className="flex items-center gap-2.5 text-amber-800">
-                                            <ShieldCheck size={20} />
-                                            <h2 className="font-extrabold text-base">Security Deposit & Payment</h2>
-                                        </div>
-                                        
-                                        <p className="text-xs text-slate-650 leading-relaxed">
-                                            We support instantaneous checkout using Razorpay gateway. Ensure you have UPI credentials, bank details, or credit cards ready.
-                                        </p>
-
-                                        <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 space-y-2 text-xs">
-                                            <div className="flex justify-between font-semibold">
-                                                <span>Awaiting Amount</span>
-                                                <span className="text-amber-800 text-sm">₹{booking.totalAmount?.toLocaleString()}</span>
-                                            </div>
-                                            <div className="flex justify-between text-muted-foreground">
-                                                <span>Payment Gateway</span>
-                                                <span>Razorpay Secure Connect</span>
-                                            </div>
-                                        </div>
-
-                                        <Button 
-                                            disabled={paymentPending}
-                                            onClick={triggerPayment}
-                                            className="w-full h-12 bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm gap-2 shadow-md shadow-amber-100"
-                                        >
-                                            {paymentPending ? (
-                                                <>
-                                                    <Loader2 size={16} className="animate-spin" />
-                                                    Processing payment popup...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <CreditCard size={16} />
-                                                    Pay Securely Now
-                                                </>
-                                            )}
-                                        </Button>
-                                    </Card>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        <Card className="p-6 border-slate-200/80 shadow-md bg-white">
-                            <h2 className="text-base font-bold text-slate-900 mb-5 flex items-center gap-2 border-b border-slate-100 pb-3">
-                                <BookOpen size={16} className="text-indigo-600" />
-                                Booking Specifications
-                            </h2>
-
-                            <div className="grid sm:grid-cols-2 gap-4">
-                                <InfoTile
-                                    icon={<Calendar size={16} />}
-                                    label="Pickup Date"
-                                    value={new Date(booking.pickupDate).toLocaleDateString("en-IN", {
-                                        day: "numeric", month: "long", year: "numeric",
-                                    })}
-                                />
-                                <InfoTile
-                                    icon={<Calendar size={16} />}
-                                    label="Return Date"
-                                    value={new Date(booking.returnDate).toLocaleDateString("en-IN", {
-                                        day: "numeric", month: "long", year: "numeric",
-                                    })}
-                                />
-                                <InfoTile
-                                    icon={<MapPin size={16} />}
-                                    label="Pickup Location"
-                                    value={booking.pickupLocation}
-                                />
-                                <InfoTile
-                                    icon={<MapPin size={16} />}
-                                    label="Drop Location"
-                                    value={booking.dropLocation}
-                                />
-                                <InfoTile
-                                    icon={<Coins size={16} />}
-                                    label="Payment Mode"
-                                    value={`${booking.paymentMethod} (${booking.payment?.status || "Unpaid"})`}
-                                />
-                                <InfoTile
-                                    icon={<Car size={16} />}
-                                    label="Rental Duration"
-                                    value={`${booking.totalDays} day${booking.totalDays !== 1 ? "s" : ""}`}
-                                />
-                            </div>
-                        </Card>
-
-                        {/* Page Actions */}
-                        <div className="flex flex-wrap gap-3">
-                            <Button onClick={() => navigate("/my-bookings")} className="bg-indigo-650 hover:bg-indigo-750 text-white font-semibold gap-2">
-                                <BookOpen size={15} />
-                                View All Bookings
-                            </Button>
-                            <Button variant="outline" asChild className="gap-2 border-slate-250 hover:bg-slate-50 transition-colors">
-                                <Link to="/">
-                                    <Home size={15} />
-                                    Back to Home
-                                </Link>
-                            </Button>
-                            <Button
-                                variant="outline"
-                                className="gap-2 border-slate-250 hover:bg-slate-50 transition-colors"
-                                onClick={() => window.print()}
-                            >
-                                <Printer size={15} />
-                                Print Details
-                            </Button>
-                        </div>
-                    </div>
-
-                    {/* Right: Car Summary + Pricing */}
-                    <div className="lg:col-span-2">
-                        <Card className="overflow-hidden border-slate-200/80 shadow-md bg-white sticky top-24">
-                            <div className="relative h-44 overflow-hidden bg-slate-900">
-                                <img
-                                    src={booking.car?.images?.[0]?.secure_url || fallbackImage}
-                                    alt={booking.car?.name}
-                                    className="h-full w-full object-cover opacity-95"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
-                                <div className="absolute bottom-4 left-4 text-white">
-                                    <p className="text-[10px] text-indigo-305 font-bold uppercase tracking-widest">{booking.car?.brand?.name}</p>
-                                    <h3 className="text-lg font-bold">{booking.car?.name}</h3>
-                                </div>
-                            </div>
-
-                            <div className="p-5 space-y-4">
-                                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                                    Price Summary
-                                </h4>
-
-                                <div className="space-y-2 text-xs text-slate-600">
-                                    <SummaryRow label="Total Days" value={booking.totalDays} />
-                                    <SummaryRow label="Base Rental Subtotal" value={`₹${booking.subtotal?.toLocaleString()}`} />
-                                    <SummaryRow label="Goods & Services Tax" value={`₹${booking.tax?.toLocaleString()}`} />
-                                    <SummaryRow label="Refundable Deposit" value={`₹${booking.securityDeposit?.toLocaleString()}`} />
+                <div className="grid lg:grid-cols-3 gap-8 items-start">
+                    <div className="lg:col-span-2 space-y-8">
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                        >
+                            <Card className="p-6 md:p-8 bg-card text-card-foreground border border-border shadow-sm rounded-3xl space-y-8">
+                                <div>
+                                    <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                                        <Sparkles className="text-primary w-5 h-5" />
+                                        Reservation Summary
+                                    </h2>
+                                    <p className="text-muted-foreground text-xs mt-0.5">Please review your rental and pickup specifications below.</p>
                                 </div>
 
-                                <div className="border-t pt-3 mt-3">
-                                    <div className="flex justify-between items-center">
-                                        <span className="font-bold text-slate-800 text-sm">Grand Total Paid/Due</span>
-                                        <span className="text-xl font-black text-indigo-600">
-                                            ₹{booking.totalAmount?.toLocaleString()}
-                                        </span>
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <InfoItem
+                                        icon={<Calendar size={20} />}
+                                        label="Pickup Date"
+                                        value={formatDate(booking.pickupDate)}
+                                    />
+
+                                    <InfoItem
+                                        icon={<Calendar size={20} />}
+                                        label="Return Date"
+                                        value={formatDate(booking.returnDate)}
+                                    />
+
+                                    <InfoItem
+                                        icon={<MapPin size={20} />}
+                                        label="Pickup Point"
+                                        value={booking.pickupLocation}
+                                    />
+
+                                    <InfoItem
+                                        icon={<MapPin size={20} />}
+                                        label="Return Point"
+                                        value={booking.dropLocation}
+                                    />
+
+                                    <InfoItem
+                                        icon={<CreditCard size={20} />}
+                                        label="Payment Method"
+                                        value={`${booking.paymentMethod} Payment`}
+                                    />
+
+                                    <InfoItem
+                                        icon={<Receipt size={20} />}
+                                        label="Booking Status"
+                                        value={booking.bookingStatus}
+                                        isStatus
+                                    />
+                                </div>
+
+                                {booking.notes && (
+                                    <div className="p-4 bg-muted border border-border rounded-2xl">
+                                        <span className="text-xs font-bold text-muted-foreground block mb-1">Your Special Notes</span>
+                                        <p className="text-foreground text-sm italic">"{booking.notes}"</p>
                                     </div>
-                                    {!needsPayment && booking.payment && (
-                                        <p className="text-[10px] text-right text-emerald-600 font-semibold mt-1">
-                                            Transaction Ref: {booking.payment.transactionId || "Offline Payment"}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        </Card>
+                                )}
+                            </Card>
+                        </motion.div>
                     </div>
 
-                </div>
+                    <div>
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                        >
+                            <Card className="overflow-hidden border border-border bg-card rounded-3xl shadow-sm">
+                                <div className="relative h-48 overflow-hidden bg-muted">
+                                    <img
+                                        src={booking.car?.images?.[0]?.secure_url || fallbackImage}
+                                        alt={booking.car?.name}
+                                        className="h-full w-full object-contain p-2"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
+                                    <div className="absolute bottom-4 left-5 right-5 text-foreground flex justify-between items-end">
+                                        <div>
+                                            <span className="px-2 py-0.5 text-[9px] font-bold bg-primary text-primary-foreground rounded-full uppercase tracking-wider">
+                                                {booking.car?.brand?.name || "Premium"}
+                                            </span>
+                                            <h3 className="text-lg font-bold mt-1 leading-tight text-foreground">
+                                                {booking.car?.name}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <div className="p-6 bg-card border-t border-border space-y-6 relative text-card-foreground">
+                                    <div className="pt-2">
+                                        <h3 className="text-xs font-bold text-foreground uppercase tracking-wider text-center">Payment Details</h3>
+                                        <p className="text-muted-foreground text-xs text-center mt-0.5">Itemized billing invoice breakdown</p>
+                                    </div>
+
+                                    <div className="space-y-3 font-mono text-xs text-foreground">
+                                        <RowItem label="Days Counted" value={booking.totalDays} />
+                                        <RowItem label="Subtotal Amount" value={`₹${booking.subtotal.toLocaleString()}`} />
+                                        <RowItem label="Service Tax (18%)" value={`₹${booking.tax.toLocaleString()}`} />
+                                        <RowItem label="Security Deposit" value={`₹${booking.securityDeposit.toLocaleString()}`} />
+                                        <hr className="border-dashed border-border" />
+                                        <RowItem label="Grand Total" value={`₹${booking.totalAmount.toLocaleString()}`} bold />
+                                    </div>
+
+                                    <div className="space-y-3 pt-4 border-t border-border">
+                                        <Button
+                                            onClick={() => navigate("/dashboard/bookings")}
+                                            className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-transform cursor-pointer"
+                                        >
+                                            Go To My Bookings
+                                            <ArrowRight className="w-4 h-4" />
+                                        </Button>
+
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => navigate("/")}
+                                            className="w-full h-11 border-border bg-transparent hover:bg-muted text-muted-foreground hover:text-foreground font-semibold rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+                                        >
+                                            <Home className="w-4 h-4" />
+                                            Back to Home
+                                        </Button>
+                                    </div>
+
+                                    <div className="flex items-center justify-center gap-1.5 text-muted-foreground text-[10px] pt-1">
+                                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                                        <span>Secure transaction receipt</span>
+                                    </div>
+                                </div>
+                            </Card>
+                        </motion.div>
+                    </div>
+                </div>
             </div>
         </main>
     );
 }
 
-function SummaryRow({ label, value }) {
+function RowItem({ label, value, bold }) {
     return (
         <div className="flex justify-between">
             <span>{label}</span>
-            <span className="font-semibold text-slate-900">{value}</span>
+            <span className={bold ? "font-bold text-foreground text-sm" : "font-semibold text-muted-foreground"}>
+                {value}
+            </span>
         </div>
     );
 }
 
-function InfoTile({ icon, label, value }) {
+function InfoItem({ icon, label, value, isStatus }) {
+    const getStatusStyle = (status) => {
+        const check = (status || "").toLowerCase();
+        if (check === "completed" || check === "confirmed") {
+            return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
+        }
+        if (check === "pending") {
+            return "bg-amber-500/10 text-amber-500 border-amber-500/20";
+        }
+        return "bg-primary/10 text-primary border-primary/20";
+    };
+
     return (
-        <div className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4">
-            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-650">
+        <div className="flex gap-4 p-4 border border-border hover:border-muted-foreground/30 rounded-2xl transition-colors bg-muted/20">
+            <div className="text-primary bg-primary/10 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-primary/20">
                 {icon}
             </div>
-            <div className="min-w-0">
-                <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">{label}</p>
-                <p className="font-bold text-slate-800 text-sm mt-0.5 truncate">{value}</p>
+            <div className="space-y-0.5">
+                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                    {label}
+                </p>
+                {isStatus ? (
+                    <span className={`inline-flex px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getStatusStyle(value)}`}>
+                        {value}
+                    </span>
+                ) : (
+                    <p className="font-bold text-foreground text-sm">
+                        {value}
+                    </p>
+                )}
             </div>
         </div>
     );

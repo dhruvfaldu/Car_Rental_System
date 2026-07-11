@@ -48,89 +48,124 @@ export default function FeatureForm({ initialData = null, onSubmit, onCancel, is
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 text-zinc-100">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-                <label className="text-sm font-semibold tracking-wide text-zinc-300 block">Feature Name</label>
+                <label className="block text-sm font-semibold tracking-wide text-foreground">
+                    Feature Name
+                </label>
+
                 <Input
                     placeholder="e.g. WiFi, Sunroof, Leather Seats"
-                    className="h-11 bg-zinc-900 border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:ring-sky-500 focus:border-sky-500 rounded-lg transition-all duration-200"
+                    className="h-11 rounded-lg border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
                     {...register("name")}
                 />
-                {errors.name && <p className="text-xs text-rose-500 mt-1 font-medium">{errors.name.message}</p>}
+
+                {errors.name && (
+                    <p className="mt-1 text-xs font-medium text-destructive">
+                        {errors.name.message}
+                    </p>
+                )}
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-semibold tracking-wide text-zinc-300 block">Select Icon Representation</label>
-                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 bg-zinc-900/40 p-3 rounded-xl border border-zinc-800/80">
+                <label className="block text-sm font-semibold tracking-wide text-foreground">
+                    Select Icon Representation
+                </label>
+
+                <div className="grid grid-cols-4 gap-2 rounded-xl border border-border bg-muted/40 p-3 sm:grid-cols-6">
                     {POPULAR_ICONS.map((ico) => {
                         const IconComp = ico.component;
                         const isSelected = activeIcon === ico.name;
+
                         return (
                             <button
                                 key={ico.name}
                                 type="button"
                                 onClick={() => selectIcon(ico.name)}
-                                className={`flex flex-col items-center gap-1.5 p-2 rounded-lg border text-center transition-all duration-200 cursor-pointer ${
-                                    isSelected
-                                        ? "bg-sky-500/10 border-sky-500 text-sky-400 font-semibold"
-                                        : "bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200"
-                                }`}
+                                className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-lg border p-2 text-center transition-all duration-200 ${isSelected
+                                        ? "border-primary bg-primary/10 text-primary font-semibold"
+                                        : "border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                                    }`}
                             >
                                 <IconComp className="h-5 w-5" />
-                                <span className="text-[10px] truncate max-w-full">{ico.label}</span>
+                                <span className="max-w-full truncate text-[10px]">
+                                    {ico.label}
+                                </span>
                             </button>
                         );
                     })}
                 </div>
-                {errors.icon && <p className="text-xs text-rose-500 mt-1 font-medium">{errors.icon.message}</p>}
+
+                {errors.icon && (
+                    <p className="mt-1 text-xs font-medium text-destructive">
+                        {errors.icon.message}
+                    </p>
+                )}
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-semibold tracking-wide text-zinc-300 block">Description (Optional)</label>
+                <label className="block text-sm font-semibold tracking-wide text-foreground">
+                    Description (Optional)
+                </label>
+
                 <Textarea
                     placeholder="Describe what comfort or feature this represents..."
                     rows={3}
-                    className="bg-zinc-900 border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:ring-sky-500 focus:border-sky-500 rounded-lg transition-all duration-200 resize-none"
+                    className="resize-none rounded-lg border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
                     {...register("description")}
                 />
-                {errors.description && <p className="text-xs text-rose-500 mt-1 font-medium">{errors.description.message}</p>}
+
+                {errors.description && (
+                    <p className="mt-1 text-xs font-medium text-destructive">
+                        {errors.description.message}
+                    </p>
+                )}
             </div>
 
-            <div className="flex items-center space-x-3 bg-zinc-900/40 p-4 rounded-xl border border-zinc-800/80">
+            <div className="flex items-center space-x-3 rounded-xl border border-border bg-muted/40 p-4">
                 <Checkbox
                     id="isActive"
                     checked={isActiveValue}
                     onCheckedChange={(checked) => setValue("isActive", checked)}
-                    className="border-zinc-700 data-[state=checked]:bg-sky-500 data-[state=checked]:border-sky-500"
+                    className="border-border data-[state=checked]:border-primary data-[state=checked]:bg-primary"
                 />
+
                 <div className="grid gap-1.5 leading-none">
-                    <label htmlFor="isActive" className="text-sm font-semibold tracking-wide text-zinc-300 cursor-pointer select-none">
+                    <label
+                        htmlFor="isActive"
+                        className="cursor-pointer select-none text-sm font-semibold tracking-wide text-foreground"
+                    >
                         Active Feature
                     </label>
-                    <p className="text-xs text-zinc-500">Only active features will be selectable when listing new cars.</p>
+
+                    <p className="text-xs text-muted-foreground">
+                        Only active features will be selectable when listing new cars.
+                    </p>
                 </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800">
+            <div className="flex items-center justify-end gap-3 border-t border-border pt-4">
                 {onCancel && (
                     <Button
                         type="button"
                         variant="outline"
                         disabled={isLoading}
                         onClick={onCancel}
-                        className="h-11 border-zinc-800 bg-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 rounded-lg font-semibold"
+                        className="h-11 rounded-lg"
                     >
                         Cancel
                     </Button>
                 )}
+
                 <Button
                     type="submit"
                     disabled={isLoading}
-                    className="h-11 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-sky-500/20 active:scale-[0.98] transition-all duration-200"
+                    className="h-11 rounded-lg bg-primary text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary/90 active:scale-[0.98]"
                 >
                     {isLoading ? (
                         <span className="flex items-center justify-center gap-2">
-                            <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Saving...
                         </span>
                     ) : initialData ? (
                         "Save Changes"

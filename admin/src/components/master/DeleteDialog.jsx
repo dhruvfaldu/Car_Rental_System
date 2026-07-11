@@ -22,15 +22,17 @@ export default function DeleteDialog({
 }) {
     return (
         <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <AlertDialogContent className="bg-zinc-900 border border-zinc-800 text-zinc-100 max-w-md">
+            <AlertDialogContent className="max-w-md border border-border bg-card text-card-foreground">
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="text-zinc-100 font-bold text-lg">
+                    <AlertDialogTitle className="text-lg font-bold text-foreground">
                         {title}
                     </AlertDialogTitle>
-                    <AlertDialogDescription className="text-zinc-400 text-sm mt-2 leading-relaxed">
+
+                    <AlertDialogDescription className="mt-2 text-sm leading-relaxed text-muted-foreground">
                         {description}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
+
                 <AlertDialogFooter className="mt-6 gap-2">
                     <AlertDialogCancel
                         asChild
@@ -39,11 +41,12 @@ export default function DeleteDialog({
                     >
                         <Button
                             variant="outline"
-                            className="border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 h-10 font-semibold"
+                            className="h-10 font-semibold"
                         >
                             Cancel
                         </Button>
                     </AlertDialogCancel>
+
                     <AlertDialogAction
                         asChild
                         onClick={(e) => {
@@ -53,7 +56,8 @@ export default function DeleteDialog({
                     >
                         <Button
                             disabled={isDeleting}
-                            className="bg-rose-600 hover:bg-rose-500 text-white h-10 font-semibold shadow-lg shadow-rose-600/10"
+                            variant="destructive"
+                            className="h-10 font-semibold shadow-sm"
                         >
                             {isDeleting ? (
                                 <span className="flex items-center gap-2">

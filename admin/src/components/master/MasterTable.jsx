@@ -30,47 +30,50 @@ export default function MasterTable({
     return (
         <div className="space-y-4">
             {/* Header controls: Search & Filters & Add Button */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-                <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center">
+                <div className="flex flex-1 flex-col items-stretch gap-3 sm:flex-row sm:items-center">
                     {onSearchChange && (
                         <div className="relative max-w-sm">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
                             <Input
                                 placeholder={searchPlaceholder}
                                 value={searchQuery}
                                 onChange={(e) => onSearchChange(e.target.value)}
-                                className="pl-9 h-10 bg-zinc-900/50 border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:ring-sky-500 focus:border-sky-500 rounded-lg"
+                                className="h-10 rounded-lg border-input bg-background pl-9 text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
                             />
                         </div>
                     )}
+
                     {filterComponent}
                 </div>
+
                 {addButton && <div className="shrink-0">{addButton}</div>}
             </div>
 
-            {/* Glassmorphic Table Container */}
-            <div className="overflow-hidden border border-zinc-800/80 rounded-xl bg-zinc-900/40 backdrop-blur-md">
+            {/* Table */}
+            <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
                 <Table>
-                    <TableHeader className="bg-zinc-950/80 border-b border-zinc-800">
-                        <TableRow className="hover:bg-transparent border-b border-zinc-800">
+                    <TableHeader className="border-b border-border bg-muted/40">
+                        <TableRow className="border-b border-border hover:bg-transparent">
                             {headers.map((header, idx) => (
                                 <TableHead
                                     key={idx}
-                                    className="text-xs font-bold uppercase tracking-wider text-zinc-400 py-3.5 h-auto"
+                                    className="h-auto py-3.5 text-xs font-bold uppercase tracking-wider text-muted-foreground"
                                 >
                                     {header}
                                 </TableHead>
                             ))}
                         </TableRow>
                     </TableHeader>
+
                     <TableBody>
                         {isLoading ? (
-                            // Render Skeleton rows while loading
                             Array.from({ length: 5 }).map((_, rIdx) => (
-                                <TableRow key={rIdx} className="border-b border-zinc-800/50">
+                                <TableRow key={rIdx} className="border-b border-border">
                                     {headers.map((_, cIdx) => (
                                         <TableCell key={cIdx} className="py-4">
-                                            <Skeleton className="h-5 w-full bg-zinc-800/50" />
+                                            <Skeleton className="h-5 w-full" />
                                         </TableCell>
                                     ))}
                                 </TableRow>
@@ -79,7 +82,7 @@ export default function MasterTable({
                             <TableRow>
                                 <TableCell
                                     colSpan={headers.length}
-                                    className="h-32 text-center text-zinc-500 text-sm font-medium py-10"
+                                    className="h-32 py-10 text-center text-sm font-medium text-muted-foreground"
                                 >
                                     {emptyMessage}
                                 </TableCell>
@@ -91,33 +94,41 @@ export default function MasterTable({
                 </Table>
             </div>
 
-            {/* Pagination Controls */}
+            {/* Pagination */}
             {totalPages > 1 && onPageChange && (
                 <div className="flex items-center justify-between px-2 py-2">
-                    <p className="text-xs text-zinc-500 font-medium">
-                        Page <span className="text-zinc-300 font-semibold">{currentPage}</span> of{" "}
-                        <span className="text-zinc-300 font-semibold">{totalPages}</span>
+                    <p className="text-xs font-medium text-muted-foreground">
+                        Page{" "}
+                        <span className="font-semibold text-foreground">
+                            {currentPage}
+                        </span>{" "}
+                        of{" "}
+                        <span className="font-semibold text-foreground">
+                            {totalPages}
+                        </span>
                     </p>
+
                     <div className="flex items-center gap-2">
                         <Button
                             variant="outline"
                             size="sm"
                             disabled={currentPage <= 1 || isLoading}
                             onClick={() => onPageChange(currentPage - 1)}
-                            className="h-8 border-zinc-800 bg-zinc-900/30 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 disabled:opacity-40"
+                            className="h-8"
                         >
-                            <ChevronLeft className="h-4 w-4 mr-1" />
+                            <ChevronLeft className="mr-1 h-4 w-4" />
                             Previous
                         </Button>
+
                         <Button
                             variant="outline"
                             size="sm"
                             disabled={currentPage >= totalPages || isLoading}
                             onClick={() => onPageChange(currentPage + 1)}
-                            className="h-8 border-zinc-800 bg-zinc-900/30 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 disabled:opacity-40"
+                            className="h-8"
                         >
                             Next
-                            <ChevronRight className="h-4 w-4 ml-1" />
+                            <ChevronRight className="ml-1 h-4 w-4" />
                         </Button>
                     </div>
                 </div>
