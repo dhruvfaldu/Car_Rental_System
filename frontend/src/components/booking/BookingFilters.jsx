@@ -26,7 +26,7 @@ export default function BookingFilters({
                 }}
                 className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 items-end"
             >
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 mb-1.5">
                     <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                         Search Reservation
                     </label>
@@ -77,7 +77,7 @@ export default function BookingFilters({
                     </Select>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex flex-row-reverse md:col-span-3 lg:col-span-2 mb-2 gap-3">
                     <Button
                         type="submit"
                         className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg transition-colors"

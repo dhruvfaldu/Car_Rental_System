@@ -72,12 +72,7 @@ export const confirmBooking = async ({
 
     await booking.save();
 
-    await Car.findByIdAndUpdate(
-        booking.car,
-        {
-            status: CAR_STATUS.BOOKED,
-        }
-    );
+
 
     await booking.populate([
         {
