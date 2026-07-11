@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import {
     CheckCircle2,
     Calendar,
@@ -10,8 +11,8 @@ import {
     ShieldCheck,
     ArrowRight,
     Home,
-    Car,
-    FileText
+    FileText,
+    Loader2
 } from "lucide-react";
 import { getBookingById } from "@/features/booking/bookingApi";
 import { Card } from "@/components/ui/card";
@@ -26,31 +27,30 @@ export default function BookingConfirmation() {
     const { bookingId } = useParams();
     const navigate = useNavigate();
 
-    const [booking, setBooking] = useState(null);
-    const [loading, setLoading] = useState(true);
+    // Fetch booking details using React Query
+    const { data: bookingData, isLoading, error } = useQuery({
+        queryKey: ["booking", bookingId],
+        queryFn: async () => {
+            const res = await getBookingById(bookingId);
+            return res.data;
+        },
+        enabled: !!bookingId,
+    });
+
+    const booking = bookingData;
 
     useEffect(() => {
-        const fetchBooking = async () => {
-            try {
-                const res = await getBookingById(bookingId);
-                setBooking(res.data);
-            } catch (err) {
-                console.error(err);
-                toast.error("Failed to load booking details.");
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (error) {
+            toast.error("Failed to load booking details.");
+        }
+    }, [error]);
 
-        fetchBooking();
-    }, [bookingId]);
-
-    if (loading) {
+    if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+            <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-                    <p className="text-slate-500 font-medium">Fetching confirmation details...</p>
+                    <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                    <p className="text-muted-foreground font-medium animate-pulse">Fetching confirmation details...</p>
                 </div>
             </div>
         );
@@ -58,12 +58,12 @@ export default function BookingConfirmation() {
 
     if (!booking) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-                <Card className="p-8 text-center max-w-md w-full border border-slate-200 rounded-3xl shadow-xl">
-                    <FileText className="mx-auto text-red-500 w-16 h-16 mb-4 animate-bounce" />
-                    <h2 className="text-2xl font-bold text-slate-800">Booking Not Found</h2>
-                    <p className="text-slate-500 mt-2">We couldn't locate the booking details you're looking for.</p>
-                    <Button onClick={() => navigate("/")} className="mt-6 w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl">
+            <div className="min-h-screen flex items-center justify-center bg-background px-4">
+                <Card className="p-8 text-center max-w-md w-full border border-border bg-card rounded-2xl shadow-xl">
+                    <FileText className="mx-auto text-rose-500 w-12 h-12 mb-4 animate-bounce" />
+                    <h2 className="text-xl font-bold text-foreground">Booking Not Found</h2>
+                    <p className="text-muted-foreground mt-2 text-sm">We couldn't locate the booking details you're looking for.</p>
+                    <Button onClick={() => navigate("/")} className="mt-6 w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl">
                         Back to Home
                     </Button>
                 </Card>
@@ -71,7 +71,6 @@ export default function BookingConfirmation() {
         );
     }
 
-    // Format date nicely
     const formatDate = (dateStr) => {
         return new Date(dateStr).toLocaleDateString("en-US", {
             weekday: "short",
@@ -82,76 +81,71 @@ export default function BookingConfirmation() {
     };
 
     return (
-        <main className="bg-gradient-to-br from-slate-50 via-slate-100 to-indigo-50/20 min-h-screen py-12">
+        <main className="bg-background text-foreground min-h-screen py-12">
             <div className="container mx-auto max-w-6xl px-4">
-                
-                {/* Success Banner Card */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <Card className="p-8 md:p-10 mb-10 text-center bg-white/70 backdrop-blur-xl border border-slate-200/80 shadow-2xl shadow-slate-100/50 rounded-3xl relative overflow-hidden">
-                        {/* Decorative Top Gradient Line */}
-                        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-500" />
+                    <Card className="p-8 md:p-10 mb-10 text-center bg-card border border-border shadow-lg rounded-3xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-500" />
                         
-                        {/* Checkmark Animation */}
                         <motion.div 
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
-                            className="mx-auto w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-100 shadow-inner"
+                            className="mx-auto w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20 shadow-inner"
                         >
-                            <CheckCircle2 className="text-emerald-500 w-12 h-12" />
+                            <CheckCircle2 className="text-emerald-500 w-9 h-9" />
                         </motion.div>
-
-                        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mt-6">
-                            Booking Confirmed Successfully!
+ 
+                        <h1 className="text-3xl font-extrabold text-foreground tracking-tight mt-6">
+                            Booking Submitted!
                         </h1>
-
-                        <p className="text-slate-500 mt-2 max-w-md mx-auto text-sm md:text-base">
-                            Your reservation is secure. We've sent the details and invoice to your registered email address.
+ 
+                        <p className="text-muted-foreground mt-2 max-w-md mx-auto text-sm">
+                            {booking.paymentMethod === "Cash"
+                                ? "Your reservation is pending admin approval. You can pay physically in cash at pickup."
+                                : "Your booking is confirmed! We have received your payment."}
                         </p>
-
-                        <div className="mt-8 inline-flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-full px-5 py-2.5 shadow-sm">
-                            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">Booking Number</span>
-                            <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                            <span className="font-mono font-bold text-slate-800 text-sm">
+ 
+                        <div className="mt-8 inline-flex items-center gap-3 bg-muted border border-border rounded-full px-5 py-2">
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Booking Number</span>
+                            <div className="w-1.5 h-1.5 bg-emerald-555 bg-emerald-400 rounded-full" />
+                            <span className="font-mono font-bold text-foreground text-sm">
                                 {booking.bookingNumber}
                             </span>
                         </div>
                     </Card>
                 </motion.div>
 
-                {/* Details Section */}
                 <div className="grid lg:grid-cols-3 gap-8 items-start">
-                    
-                    {/* Left: Booking Details */}
                     <div className="lg:col-span-2 space-y-8">
                         <motion.div
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
                         >
-                            <Card className="p-6 md:p-8 bg-white border border-slate-200/80 shadow-xl rounded-3xl space-y-8">
+                            <Card className="p-6 md:p-8 bg-card text-card-foreground border border-border shadow-sm rounded-3xl space-y-8">
                                 <div>
-                                    <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                        <Sparkles className="text-indigo-600 w-5 h-5" />
+                                    <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                                        <Sparkles className="text-primary w-5 h-5" />
                                         Reservation Summary
                                     </h2>
-                                    <p className="text-slate-500 text-xs mt-0.5">Please review your rental and pickup specifications below.</p>
+                                    <p className="text-muted-foreground text-xs mt-0.5">Please review your rental and pickup specifications below.</p>
                                 </div>
 
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <InfoItem
                                         icon={<Calendar size={20} />}
-                                        label="Pickup Date & Time"
+                                        label="Pickup Date"
                                         value={formatDate(booking.pickupDate)}
                                     />
 
                                     <InfoItem
                                         icon={<Calendar size={20} />}
-                                        label="Return Date & Time"
+                                        label="Return Date"
                                         value={formatDate(booking.returnDate)}
                                     />
 
@@ -182,97 +176,84 @@ export default function BookingConfirmation() {
                                 </div>
 
                                 {booking.notes && (
-                                    <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
-                                        <span className="text-xs font-bold text-slate-500 block mb-1">Your Special Notes</span>
-                                        <p className="text-slate-600 text-sm italic">"{booking.notes}"</p>
+                                    <div className="p-4 bg-muted border border-border rounded-2xl">
+                                        <span className="text-xs font-bold text-muted-foreground block mb-1">Your Special Notes</span>
+                                        <p className="text-foreground text-sm italic">"{booking.notes}"</p>
                                     </div>
                                 )}
                             </Card>
                         </motion.div>
                     </div>
 
-                    {/* Right: Invoice Receipt */}
                     <div>
                         <motion.div
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
                         >
-                            <Card className="overflow-hidden border border-slate-200 bg-white rounded-3xl shadow-xl">
-                                {/* Car Quick view banner */}
-                                <div className="relative h-48 overflow-hidden">
+                            <Card className="overflow-hidden border border-border bg-card rounded-3xl shadow-sm">
+                                <div className="relative h-48 overflow-hidden bg-muted">
                                     <img
                                         src={booking.car?.images?.[0]?.secure_url || fallbackImage}
                                         alt={booking.car?.name}
-                                        className="h-full w-full object-cover"
+                                        className="h-full w-full object-contain p-2"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent" />
-                                    <div className="absolute bottom-4 left-5 right-5 text-white flex justify-between items-end">
+                                    <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
+                                    <div className="absolute bottom-4 left-5 right-5 text-foreground flex justify-between items-end">
                                         <div>
-                                            <span className="px-2 py-0.5 text-[9px] font-bold bg-indigo-600 text-white rounded-full uppercase tracking-wider">
+                                            <span className="px-2 py-0.5 text-[9px] font-bold bg-primary text-primary-foreground rounded-full uppercase tracking-wider">
                                                 {booking.car?.brand?.name || "Premium"}
                                             </span>
-                                            <h3 className="text-lg font-bold mt-1 leading-tight">
+                                            <h3 className="text-lg font-bold mt-1 leading-tight text-foreground">
                                                 {booking.car?.name}
                                             </h3>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Styled Paper Receipt section */}
-                                <div className="p-6 bg-slate-50 border-t border-slate-100 space-y-6 relative">
-                                    {/* Monospace edge effect indicators */}
-                                    <div className="absolute -top-1.5 left-0 right-0 flex justify-between px-2 overflow-hidden pointer-events-none">
-                                        {Array.from({ length: 24 }).map((_, i) => (
-                                            <div key={i} className="w-2 h-2 bg-white rounded-full border border-slate-100" />
-                                        ))}
-                                    </div>
-
+                                <div className="p-6 bg-card border-t border-border space-y-6 relative text-card-foreground">
                                     <div className="pt-2">
-                                        <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider text-center">Payment Details</h3>
-                                        <p className="text-slate-400 text-xs text-center mt-0.5">Itemized billing invoice breakdown</p>
+                                        <h3 className="text-xs font-bold text-foreground uppercase tracking-wider text-center">Payment Details</h3>
+                                        <p className="text-muted-foreground text-xs text-center mt-0.5">Itemized billing invoice breakdown</p>
                                     </div>
 
-                                    <div className="space-y-3 font-mono text-sm text-slate-600">
+                                    <div className="space-y-3 font-mono text-xs text-foreground">
                                         <RowItem label="Days Counted" value={booking.totalDays} />
                                         <RowItem label="Subtotal Amount" value={`₹${booking.subtotal.toLocaleString()}`} />
                                         <RowItem label="Service Tax (18%)" value={`₹${booking.tax.toLocaleString()}`} />
                                         <RowItem label="Security Deposit" value={`₹${booking.securityDeposit.toLocaleString()}`} />
-                                        <hr className="border-dashed border-slate-300" />
-                                        <RowItem label="Grand Total Paid" value={`₹${booking.totalAmount.toLocaleString()}`} bold />
+                                        <hr className="border-dashed border-border" />
+                                        <RowItem label="Grand Total" value={`₹${booking.totalAmount.toLocaleString()}`} bold />
                                     </div>
 
-                                    {/* Action Buttons */}
-                                    <div className="space-y-3 pt-4 border-t border-slate-200">
+                                    <div className="space-y-3 pt-4 border-t border-border">
                                         <Button
                                             onClick={() => navigate("/dashboard/bookings")}
-                                            className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-indigo-100 active:scale-[0.99] transition-transform"
+                                            className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-transform cursor-pointer"
                                         >
-                                            View My Bookings
+                                            Go To My Bookings
                                             <ArrowRight className="w-4 h-4" />
                                         </Button>
 
                                         <Button
                                             variant="outline"
                                             onClick={() => navigate("/")}
-                                            className="w-full h-11 border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold rounded-xl flex items-center justify-center gap-2"
+                                            className="w-full h-11 border-border bg-transparent hover:bg-muted text-muted-foreground hover:text-foreground font-semibold rounded-xl flex items-center justify-center gap-2 cursor-pointer"
                                         >
                                             <Home className="w-4 h-4" />
                                             Back to Home
                                         </Button>
                                     </div>
 
-                                    <div className="flex items-center justify-center gap-1.5 text-slate-400 text-[10px] pt-1">
-                                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                                    <div className="flex items-center justify-center gap-1.5 text-muted-foreground text-[10px] pt-1">
+                                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                                         <span>Secure transaction receipt</span>
                                     </div>
                                 </div>
                             </Card>
                         </motion.div>
                     </div>
-
                 </div>
-
             </div>
         </main>
     );
@@ -282,7 +263,7 @@ function RowItem({ label, value, bold }) {
     return (
         <div className="flex justify-between">
             <span>{label}</span>
-            <span className={bold ? "font-bold text-slate-900 text-base" : "font-semibold text-slate-800"}>
+            <span className={bold ? "font-bold text-foreground text-sm" : "font-semibold text-muted-foreground"}>
                 {value}
             </span>
         </div>
@@ -290,33 +271,32 @@ function RowItem({ label, value, bold }) {
 }
 
 function InfoItem({ icon, label, value, isStatus }) {
-    // Generate status color badge
     const getStatusStyle = (status) => {
         const check = (status || "").toLowerCase();
         if (check === "completed" || check === "confirmed") {
-            return "bg-emerald-100 text-emerald-800 border-emerald-200";
+            return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
         }
         if (check === "pending") {
-            return "bg-amber-100 text-amber-800 border-amber-200";
+            return "bg-amber-500/10 text-amber-500 border-amber-500/20";
         }
-        return "bg-indigo-100 text-indigo-800 border-indigo-200";
+        return "bg-primary/10 text-primary border-primary/20";
     };
 
     return (
-        <div className="flex gap-4 p-4 border border-slate-100 hover:border-slate-200 rounded-2xl transition-colors bg-slate-50/50">
-            <div className="text-indigo-600 bg-indigo-50 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-indigo-100/50">
+        <div className="flex gap-4 p-4 border border-border hover:border-muted-foreground/30 rounded-2xl transition-colors bg-muted/20">
+            <div className="text-primary bg-primary/10 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-primary/20">
                 {icon}
             </div>
             <div className="space-y-0.5">
-                <p className="text-xs text-slate-400 font-medium">
+                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
                     {label}
                 </p>
                 {isStatus ? (
-                    <span className={`inline-flex px-2.5 py-0.5 text-xs font-bold rounded-full border ${getStatusStyle(value)}`}>
+                    <span className={`inline-flex px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getStatusStyle(value)}`}>
                         {value}
                     </span>
                 ) : (
-                    <p className="font-bold text-slate-800 text-sm md:text-base">
+                    <p className="font-bold text-foreground text-sm">
                         {value}
                     </p>
                 )}

@@ -7,14 +7,15 @@ import {
     Users,
     FileText,
     LogOut,
+    Tags,
+    SlidersHorizontal,
+    X,
 } from "lucide-react";
-import { useLogout } from "@/features/auth/hook/useLogout";
-import { useSelector } from "react-redux";
+import { useAuth } from "@/features/auth/context/AuthContext";
 
-const Sidebar = () => {
+const Sidebar = ({ onClose }) => {
     const location = useLocation();
-    const { logout } = useLogout();
-    const { user } = useSelector((state) => state.auth);
+    const { logout, user } = useAuth();
 
     const navItems = [
         {
@@ -25,66 +26,93 @@ const Sidebar = () => {
         {
             name: "Brands",
             icon: Award,
-            path: "/brand",
+            path: "/brands",
+        },
+        {
+            name: "Categories",
+            icon: Tags,
+            path: "/categories",
+        },
+        {
+            name: "Features",
+            icon: SlidersHorizontal,
+            path: "/features",
         },
         {
             name: "Cars",
             icon: Car,
             path: "/cars",
-            disabled: true,
         },
         {
             name: "Bookings",
             icon: CalendarDays,
             path: "/bookings",
-            disabled: true,
         },
         {
             name: "Users",
             icon: Users,
             path: "/users",
-            disabled: true,
         },
         {
             name: "Invoices",
             icon: FileText,
             path: "/invoices",
-            disabled: true,
         },
     ];
 
+    const handleLinkClick = () => {
+        if (onClose) onClose();
+    };
+
     return (
-        <aside className="w-64 h-full bg-zinc-950 border-r border-zinc-800 flex flex-col justify-between shrink-0 select-none">
-            {/* Upper Portion */}
+        <aside className="flex h-full w-64 shrink-0 select-none flex-col justify-between border-r border-sidebar-border bg-sidebar">
+            {/* Top Section */}
             <div className="flex flex-col overflow-y-auto">
-                {/* Logo Section */}
-                <div className="h-16 flex items-center px-6 border-b border-zinc-900">
-                    <Link to="/" className="flex items-center gap-3">
-                        <div className="p-2 bg-gradient-to-tr from-sky-500 to-indigo-500 rounded-lg">
-                            <Car className="h-5 w-5 text-white" />
+                {/* Logo */}
+                <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-6">
+                    <Link
+                        to="/"
+                        className="flex items-center gap-3"
+                        onClick={handleLinkClick}
+                    >
+                        <div className="rounded-lg bg-sidebar-primary p-2">
+                            <Car className="h-5 w-5 text-sidebar-primary-foreground" />
                         </div>
-                        <span className="text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400">
+
+                        <span className="text-lg font-bold tracking-tight text-sidebar-foreground">
                             RevDrive Admin
                         </span>
                     </Link>
+
+                    {onClose && (
+                        <button
+                            onClick={onClose}
+                            className="p-1.5 text-muted-foreground transition-colors hover:text-foreground md:hidden"
+                            title="Close Sidebar"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                    )}
                 </div>
 
-                {/* Nav Links */}
-                <nav className="p-4 space-y-1.5">
+                {/* Navigation */}
+                <nav className="space-y-1.5 p-4">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.path;
-                        
+
                         if (item.disabled) {
                             return (
                                 <div
                                     key={item.name}
-                                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-zinc-600 cursor-not-allowed select-none text-sm font-medium"
+                                    className="flex cursor-not-allowed select-none items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-muted-foreground opacity-50"
                                     title="Coming soon"
                                 >
                                     <Icon className="h-4 w-4" />
+
                                     <span>{item.name}</span>
-                                    <span className="ml-auto text-[10px] bg-zinc-900 text-zinc-600 px-1.5 py-0.5 rounded font-normal uppercase tracking-wider">
+
+                                    <span className="ml-auto rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
                                         Soon
                                     </span>
                                 </div>
@@ -95,13 +123,19 @@ const Sidebar = () => {
                             <Link
                                 key={item.name}
                                 to={item.path}
-                                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                    isActive
-                                        ? "bg-gradient-to-r from-sky-500/10 to-indigo-500/5 text-sky-400 border border-sky-500/20"
-                                        : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50 border border-transparent"
-                                }`}
+                                onClick={handleLinkClick}
+                                className={`flex items-center gap-3 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all duration-200 ${isActive
+                                    ? "border-sidebar-border bg-sidebar-accent text-sidebar-accent-foreground"
+                                    : "border-transparent text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                    }`}
                             >
-                                <Icon className={`h-4 w-4 ${isActive ? "text-sky-400" : "text-zinc-400"}`} />
+                                <Icon
+                                    className={`h-4 w-4 ${isActive
+                                        ? "text-sidebar-primary"
+                                        : "text-muted-foreground"
+                                        }`}
+                                />
+
                                 <span>{item.name}</span>
                             </Link>
                         );
@@ -109,27 +143,32 @@ const Sidebar = () => {
                 </nav>
             </div>
 
-            {/* Bottom Portion / User Profile & Logout */}
-            <div className="p-4 border-t border-zinc-900 bg-zinc-950/50 space-y-4">
+            {/* Bottom Section */}
+            <div className="space-y-4 border-t border-sidebar-border bg-sidebar p-4">
                 {user && (
                     <div className="flex items-center gap-3 px-2">
-                        <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-500 flex items-center justify-center font-bold text-sm text-white border border-zinc-800">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sidebar-primary font-bold text-sm text-sidebar-primary-foreground">
                             {user.name ? user.name[0].toUpperCase() : "A"}
                         </div>
+
                         <div className="min-w-0 flex-1">
-                            <p className="text-sm font-semibold text-zinc-200 truncate">
+                            <p className="truncate text-sm font-semibold text-sidebar-foreground">
                                 {user.name}
                             </p>
-                            <p className="text-xs text-zinc-500 truncate">
-                                {user.email}
+
+                            <p className="truncate text-xs text-muted-foreground">
+                                {user.role}
                             </p>
                         </div>
                     </div>
                 )}
-                
+
                 <button
-                    onClick={logout}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all duration-200 cursor-pointer"
+                    onClick={() => {
+                        logout();
+                        handleLinkClick();
+                    }}
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-transparent px-4 py-2.5 text-sm font-medium text-destructive transition-all duration-200 hover:bg-destructive/10 hover:border-destructive/20"
                 >
                     <LogOut className="h-4 w-4" />
                     <span>Sign Out</span>

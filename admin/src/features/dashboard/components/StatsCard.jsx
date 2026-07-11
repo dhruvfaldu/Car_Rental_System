@@ -1,27 +1,28 @@
+import React from "react";
 import { motion } from "framer-motion";
 
-const StatsCard = ({ title, value, growth, icon: Icon, color, bg }) => {
+const StatsCard = ({ title, value, icon: Icon, color, bg }) => {
     return (
         <motion.div
             whileHover={{ y: -4 }}
             transition={{ duration: 0.2 }}
-            className="rounded-2xl border bg-white p-6 shadow-sm transition hover:shadow-md"
+            className="rounded-2xl border border-border bg-card/80 p-6 shadow-md backdrop-blur-md transition-all hover:border-primary/20 hover:shadow-lg"
         >
             <div className="flex items-center justify-between">
-                <div>
-                    <p className="text-sm text-gray-500">{title}</p>
-
-                    <h2 className="mt-2 text-3xl font-bold">{value}</h2>
-
-                    <p className="mt-2 text-sm font-medium text-green-600">
-                        {growth} from last month
+                <div className="space-y-1">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        {title}
                     </p>
+
+                    <h2 className="text-2xl font-extrabold tracking-tight text-foreground">
+                        {value}
+                    </h2>
                 </div>
 
                 <div
-                    className={`flex h-14 w-14 items-center justify-center rounded-xl ${bg}`}
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl border border-border ${bg}`}
                 >
-                    <Icon className={`h-7 w-7 ${color}`} />
+                    <Icon className={`h-5 w-5 ${color}`} />
                 </div>
             </div>
         </motion.div>
