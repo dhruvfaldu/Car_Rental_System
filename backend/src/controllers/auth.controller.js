@@ -32,6 +32,10 @@ export const login = asyncHandler(async (req, res) => {
         throw new ApiError(403, "Access denied. Only administrators or staff can log in here.");
     }
 
+    if (appType === "customer" && (user.role === "admin" || user.role === "staff")) {
+        throw new ApiError(403, "Access denied. Please log in through the Admin Panel.");
+    }
+
     res.cookie(cookieName, token, cookieOptions);
 
     return res.status(200).json(

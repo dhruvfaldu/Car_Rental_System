@@ -3,6 +3,8 @@ import Brand from "../../models/brand.model.js";
 import Category from "../../models/category.model.js";
 import Feature from "../../models/feature.model.js";
 import Car from "./car.model.js";
+import { Booking } from "../booking/booking.model.js";
+import { BOOKING_STATUS } from "../booking/booking.constant.js";
 
 import ApiError from "../../utils/ApiError.js";
 import { deleteMultipleImages, uploadMultipleImages } from "../../services/cloudinary.service.js";
@@ -73,7 +75,15 @@ class CarService {
             throw new ApiError(404, "Car not found");
         }
 
-        return car;
+        const bookings = await Booking.find({
+            car: car._id,
+            bookingStatus: { $in: [BOOKING_STATUS.CONFIRMED, BOOKING_STATUS.PICKED_UP] }
+        }).select("pickupDate returnDate").lean();
+
+        const carObj = car.toObject ? car.toObject() : car;
+        carObj.bookedDates = bookings;
+
+        return carObj;
     }
 
     async getCarBySlug(slug) {
@@ -86,7 +96,15 @@ class CarService {
             throw new ApiError(404, "Car not found");
         }
 
-        return car;
+        const bookings = await Booking.find({
+            car: car._id,
+            bookingStatus: { $in: [BOOKING_STATUS.CONFIRMED, BOOKING_STATUS.PICKED_UP] }
+        }).select("pickupDate returnDate").lean();
+
+        const carObj = car.toObject ? car.toObject() : car;
+        carObj.bookedDates = bookings;
+
+        return carObj;
     }
 
     async updateCar(id, data, files) {

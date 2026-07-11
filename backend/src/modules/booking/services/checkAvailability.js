@@ -58,7 +58,6 @@ export const checkAvailability = async ({
 
         bookingStatus: {
             $in: [
-                BOOKING_STATUS.PENDING,
                 BOOKING_STATUS.CONFIRMED,
                 BOOKING_STATUS.PICKED_UP,
             ],

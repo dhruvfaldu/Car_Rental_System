@@ -82,31 +82,37 @@ export default function BrandsPage() {
     };
 
     const renderBrandRow = (brand) => (
-        <TableRow key={brand._id} className="border-b border-zinc-800/50 hover:bg-zinc-900/20 transition-colors">
+        <TableRow
+            key={brand._id}
+            className="border-b border-border transition-colors hover:bg-accent/40"
+        >
             <TableCell className="py-3">
-                <div className="w-10 h-10 rounded-lg border border-zinc-800 bg-zinc-950 flex items-center justify-center p-1.5 overflow-hidden">
+                <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-border bg-card p-1.5">
                     {brand.logo?.secure_url ? (
                         <img
                             src={brand.logo.secure_url}
                             alt={`${brand.name} logo`}
-                            className="max-w-full max-h-full object-contain"
+                            className="max-h-full max-w-full object-contain"
                         />
                     ) : (
-                        <span className="text-zinc-600 font-bold text-xs uppercase">
+                        <span className="text-xs font-bold uppercase text-muted-foreground">
                             {brand.name.slice(0, 2)}
                         </span>
                     )}
                 </div>
             </TableCell>
-            <TableCell className="py-3 font-semibold text-zinc-200">
+
+            <TableCell className="py-3 font-semibold text-foreground">
                 {brand.name}
             </TableCell>
+
             <TableCell className="py-3">
                 <StatusBadge status={brand.isActive} type="active" />
             </TableCell>
-            <TableCell className="py-3 text-zinc-400 font-medium">
+
+            <TableCell className="py-3 font-medium text-muted-foreground">
                 <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-zinc-500" />
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
                     {new Date(brand.createdAt).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
@@ -114,6 +120,7 @@ export default function BrandsPage() {
                     })}
                 </div>
             </TableCell>
+
             <TableCell className="py-3">
                 <div className="flex items-center gap-2">
                     <Button
@@ -123,15 +130,16 @@ export default function BrandsPage() {
                             setEditingBrand(brand);
                             setIsFormOpen(true);
                         }}
-                        className="h-8 w-8 text-zinc-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg transition-all"
+                        className="h-8 w-8 rounded-lg text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary"
                     >
                         <Edit className="h-4 w-4" />
                     </Button>
+
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => setDeletingBrand(brand)}
-                        className="h-8 w-8 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
+                        className="h-8 w-8 rounded-lg text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive"
                     >
                         <Trash2 className="h-4 w-4" />
                     </Button>
@@ -141,47 +149,47 @@ export default function BrandsPage() {
     );
 
     return (
-        <div className="p-8 space-y-6 max-w-7xl mx-auto">
-            {/* Header section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="max-w-7xl mx-auto space-y-6 p-8">
+            {/* Header */}
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400">
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground">
                         Brand Management
                     </h1>
-                    <p className="text-sm text-zinc-400">
-                        Create, edit, and manage manufacturers for the fleet.
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Create, edit, and manage manufacturers for your rental fleet.
                     </p>
                 </div>
             </div>
 
-            {/* Reusable table component */}
+            {/* Table */}
             <MasterTable
                 headers={["Logo", "Name", "Status", "Created At", "Actions"]}
                 data={paginatedBrands}
                 isLoading={isLoading}
                 searchQuery={searchQuery}
                 onSearchChange={handleSearchChange}
-                searchPlaceholder="Search brands by name..."
+                searchPlaceholder="Search brands..."
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
                 renderRow={renderBrandRow}
-                emptyMessage="No brands found. Add a new brand to get started!"
+                emptyMessage="No brands found."
                 addButton={
                     <Button
                         onClick={() => {
                             setEditingBrand(null);
                             setIsFormOpen(true);
                         }}
-                        className="h-10 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-sky-500/10 active:scale-[0.98] transition-all"
+                        className="h-11 rounded-lg bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
                     >
-                        <Plus className="h-5 w-5 mr-1" />
+                        <Plus className="mr-2 h-4 w-4" />
                         Add Brand
                     </Button>
                 }
             />
 
-            {/* Sheet Form (Drawer) */}
+            {/* Brand Form Drawer */}
             <Sheet
                 open={isFormOpen}
                 onOpenChange={(open) => {
@@ -189,13 +197,14 @@ export default function BrandsPage() {
                     if (!open) setEditingBrand(null);
                 }}
             >
-                <SheetContent className="bg-zinc-900 border-l border-zinc-800 text-zinc-100 max-w-md w-full p-6">
+                <SheetContent className="w-full max-w-md border-l border-border bg-background p-6">
                     <SheetHeader className="mb-6">
-                        <SheetTitle className="text-zinc-100 font-bold text-xl">
+                        <SheetTitle className="text-2xl font-semibold text-foreground">
                             {editingBrand ? "Edit Brand" : "Add Brand"}
                         </SheetTitle>
-                        <SheetDescription className="text-zinc-400 text-sm">
-                            Fill in the manufacturer details. Make sure the logo is transparent for best rendering.
+
+                        <SheetDescription className="text-sm text-muted-foreground">
+                            Enter the manufacturer details below.
                         </SheetDescription>
                     </SheetHeader>
 
@@ -211,14 +220,14 @@ export default function BrandsPage() {
                 </SheetContent>
             </Sheet>
 
-            {/* Deletion confirmation dialog */}
+            {/* Delete Dialog */}
             <DeleteDialog
                 isOpen={!!deletingBrand}
                 onClose={() => setDeletingBrand(null)}
                 onConfirm={handleDeleteConfirm}
                 isDeleting={isDeleting}
                 title={`Delete ${deletingBrand?.name}?`}
-                description={`Are you sure you want to delete ${deletingBrand?.name}? All cars linked to this brand may lose their manufacturer reference.`}
+                description={`Are you sure you want to delete ${deletingBrand?.name}? Cars associated with this brand may lose their manufacturer reference.`}
             />
         </div>
     );

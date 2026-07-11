@@ -23,6 +23,10 @@ export const protect = asyncHandler(async (req, res, next) => {
         throw new ApiError(401, "User not found");
     }
 
+    if (appType === "customer" && (user.role === "admin" || user.role === "staff")) {
+        throw new ApiError(403, "Access denied. Please log in through the Admin Panel.");
+    }
+
     req.user = user;
 
     next();

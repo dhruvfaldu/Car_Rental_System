@@ -4,6 +4,8 @@ import {
     BOOKING_STATUS,
     BOOKING_STATUS_TRANSITIONS,
 } from "../booking.constant.js";
+import Car from "../../Cars/car.model.js";
+import { CAR_STATUS } from "../../Cars/car.constant.js";
 
 export const updateBookingStatus = async ({
     bookingId,
@@ -28,6 +30,8 @@ export const updateBookingStatus = async ({
         );
     }
 
+    const wasConfirmed = currentStatus === BOOKING_STATUS.CONFIRMED;
+
     booking.bookingStatus = bookingStatus;
 
     // Track timestamps
@@ -44,6 +48,8 @@ export const updateBookingStatus = async ({
     }
 
     await booking.save();
+
+
 
     await booking.populate([
         {

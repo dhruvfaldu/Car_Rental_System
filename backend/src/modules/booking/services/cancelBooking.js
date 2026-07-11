@@ -1,6 +1,8 @@
 import { Booking } from "../booking.model.js";
 import ApiError from "../../../utils/ApiError.js";
 import { BOOKING_STATUS } from "../booking.constant.js";
+import Car from "../../Cars/car.model.js";
+import { CAR_STATUS } from "../../Cars/car.constant.js";
 
 export const cancelBooking = async ({
     bookingId,
@@ -35,12 +37,16 @@ export const cancelBooking = async ({
         );
     }
 
+    const wasConfirmed = booking.bookingStatus === BOOKING_STATUS.CONFIRMED;
+
     booking.bookingStatus = BOOKING_STATUS.CANCELLED;
     booking.cancelReason = cancelReason;
     booking.cancelledAt = new Date();
     booking.cancelledBy = userId;
 
     await booking.save();
+
+
 
     await booking.populate([
         {

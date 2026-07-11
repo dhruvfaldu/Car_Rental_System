@@ -18,7 +18,12 @@ export default function AuthProvider({ children }) {
     useEffect(() => {
         if (isSuccess && data) {
             // data is ApiResponse { success: true, message: "...", data: user }
-            dispatch(setUser(data.data));
+            const user = data.data;
+            if (user && (user.role === "admin" || user.role === "staff")) {
+                dispatch(finishChecking());
+            } else {
+                dispatch(setUser(user));
+            }
         } else if (isError) {
             dispatch(finishChecking());
         } else if (!isLoading) {
