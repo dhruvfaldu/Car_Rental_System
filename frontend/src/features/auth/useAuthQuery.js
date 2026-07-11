@@ -2,23 +2,42 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { getProfile, login, logoutUser, register, updateProfile } from "./authApi";
 import { loginSuccess, setUser, logout } from "@/store/slices/authSlice";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export const useRegisterMutation = () => {
     return useMutation({
         mutationFn: register,
+        onSuccess: () => {
+            toast.success("Registration successful! Please log in.");
+        },
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "Registration failed");
+        },
     });
 };
 
 export const useLoginMutation = () => {
     const dispatch = useDispatch();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: login,
 
         onSuccess: (data) => {
-            dispatch(loginSuccess(data));
+            const user = data.data;
+            if (user && (user.role === "admin" || user.role === "staff")) {
+                toast.error("Access denied. Please log in through the Admin Panel.");
+                return;
+            }
+            // Update the profile query cache
+            queryClient.setQueryData(["me"], data);
+            // Dispatch login success with the user object directly
+            dispatch(loginSuccess(user));
+        },
+
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "Invalid credentials");
         },
     });
 };

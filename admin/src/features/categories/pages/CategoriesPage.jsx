@@ -82,36 +82,49 @@ export default function CategoriesPage() {
     };
 
     const renderCategoryRow = (category) => (
-        <TableRow key={category._id} className="border-b border-zinc-800/50 hover:bg-zinc-900/20 transition-colors">
+        <TableRow
+            key={category._id}
+            className="border-b border-border transition-colors hover:bg-muted/40"
+        >
             <TableCell className="py-3">
-                <div className="w-12 h-10 rounded-lg border border-zinc-800 bg-zinc-950 flex items-center justify-center p-1.5 overflow-hidden">
+                <div className="flex h-10 w-12 items-center justify-center overflow-hidden rounded-lg border border-border bg-card p-1.5">
                     {category.image?.secure_url ? (
                         <img
                             src={category.image.secure_url}
                             alt={`${category.name} illustration`}
-                            className="max-w-full max-h-full object-contain"
+                            className="max-h-full max-w-full object-contain"
                         />
                     ) : (
-                        <span className="text-zinc-600 font-bold text-xs uppercase">
+                        <span className="text-xs font-bold uppercase text-muted-foreground">
                             {category.name.slice(0, 2)}
                         </span>
                     )}
                 </div>
             </TableCell>
-            <TableCell className="py-3 font-semibold text-zinc-200">
+
+            <TableCell className="py-3">
                 <div>
-                    <p>{category.name}</p>
-                    <p className="text-xs font-normal text-zinc-500 max-w-[240px] truncate mt-0.5" title={category.description}>
+                    <p className="font-semibold text-foreground">
+                        {category.name}
+                    </p>
+
+                    <p
+                        title={category.description}
+                        className="mt-0.5 max-w-[240px] truncate text-xs font-normal text-muted-foreground"
+                    >
                         {category.description || "No description provided."}
                     </p>
                 </div>
             </TableCell>
+
             <TableCell className="py-3">
                 <StatusBadge status={category.isActive} type="active" />
             </TableCell>
-            <TableCell className="py-3 text-zinc-400 font-medium">
+
+            <TableCell className="py-3 font-medium text-muted-foreground">
                 <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-zinc-500" />
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+
                     {new Date(category.createdAt).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
@@ -119,6 +132,7 @@ export default function CategoriesPage() {
                     })}
                 </div>
             </TableCell>
+
             <TableCell className="py-3">
                 <div className="flex items-center gap-2">
                     <Button
@@ -128,15 +142,16 @@ export default function CategoriesPage() {
                             setEditingCategory(category);
                             setIsFormOpen(true);
                         }}
-                        className="h-8 w-8 text-zinc-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg transition-all"
+                        className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
                     >
                         <Edit className="h-4 w-4" />
                     </Button>
+
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => setDeletingCategory(category)}
-                        className="h-8 w-8 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
+                        className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                     >
                         <Trash2 className="h-4 w-4" />
                     </Button>
@@ -146,14 +161,15 @@ export default function CategoriesPage() {
     );
 
     return (
-        <div className="p-8 space-y-6 max-w-7xl mx-auto">
+        <div className="mx-auto max-w-7xl space-y-6 p-8">
             {/* Header section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400">
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground">
                         Category Management
                     </h1>
-                    <p className="text-sm text-zinc-400">
+
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Define vehicle categories like Sedan, SUV, Luxury etc.
                     </p>
                 </div>
@@ -161,7 +177,13 @@ export default function CategoriesPage() {
 
             {/* Reusable table component */}
             <MasterTable
-                headers={["Image", "Name & Description", "Status", "Created At", "Actions"]}
+                headers={[
+                    "Image",
+                    "Name & Description",
+                    "Status",
+                    "Created At",
+                    "Actions",
+                ]}
                 data={paginatedCategories}
                 isLoading={isLoading}
                 searchQuery={searchQuery}
@@ -178,9 +200,9 @@ export default function CategoriesPage() {
                             setEditingCategory(null);
                             setIsFormOpen(true);
                         }}
-                        className="h-10 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-sky-500/10 active:scale-[0.98] transition-all"
+                        className="h-10 rounded-lg bg-primary text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary/90 active:scale-[0.98]"
                     >
-                        <Plus className="h-5 w-5 mr-1" />
+                        <Plus className="mr-1 h-5 w-5" />
                         Add Category
                     </Button>
                 }
@@ -194,12 +216,13 @@ export default function CategoriesPage() {
                     if (!open) setEditingCategory(null);
                 }}
             >
-                <SheetContent className="bg-zinc-950 border-l border-zinc-800 text-zinc-100 max-w-md w-full p-6">
+                <SheetContent className="w-full max-w-md border-l border-border bg-background p-6">
                     <SheetHeader className="mb-6">
-                        <SheetTitle className="text-zinc-100 font-bold text-xl">
+                        <SheetTitle className="text-2xl font-semibold text-foreground">
                             {editingCategory ? "Edit Category" : "Add Category"}
                         </SheetTitle>
-                        <SheetDescription className="text-zinc-400 text-sm">
+
+                        <SheetDescription className="text-sm text-muted-foreground">
                             Configure vehicle classification details and image visual representation.
                         </SheetDescription>
                     </SheetHeader>
