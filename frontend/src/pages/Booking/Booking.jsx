@@ -65,6 +65,10 @@ export default function Booking() {
         defaultValues: {
             paymentMethod: "Online",
             notes: "",
+            pickupLocation: localStorage.getItem("pickupLocation") || "",
+            dropLocation: localStorage.getItem("pickupLocation") || "",
+            pickupDate: localStorage.getItem("pickupDate") || "",
+            returnDate: localStorage.getItem("returnDate") || "",
         },
     });
 

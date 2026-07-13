@@ -40,7 +40,7 @@ export default function CarCard({ car }) {
 
                 {/* Category Badge */}
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
-                    <Badge className="bg-indigo-600 text-white text-xs font-semibold px-2.5 py-0.5 shadow-sm">
+                    <Badge className="bg-slate-900/80 text-white text-xs font-semibold px-2.5 py-0.5 shadow-sm">
                         {car.category?.name || "Premium"}
                     </Badge>
                 </div>
@@ -68,7 +68,7 @@ export default function CarCard({ car }) {
                         {car.brand?.name || "Premium Fleet"}
                     </span>
                     <h3 className={`text-lg font-extrabold text-slate-900 transition truncate ${
-                        isAvailable ? "group-hover:text-indigo-600" : ""
+                        isAvailable ? "group-hover:text-slate-900/60" : ""
                     }`}>
                         {car.name}
                     </h3>
@@ -106,7 +106,7 @@ export default function CarCard({ car }) {
                     </div>
 
                     {isAvailable ? (
-                        <Button asChild size="sm" className="rounded-xl px-4 font-bold shadow-sm bg-indigo-600 hover:bg-indigo-700 text-white group/btn shrink-0">
+                        <Button asChild size="sm" className="rounded-xl px-4 font-bold shadow-sm bg-slate-600 hover:bg-slate-700 text-white group/btn shrink-0">
                             <Link to={`/cars/${car.slug}`}>
                                 View Details
                                 <ArrowRight size={14} className="ml-1.5 transition-transform group-hover/btn:translate-x-1" />

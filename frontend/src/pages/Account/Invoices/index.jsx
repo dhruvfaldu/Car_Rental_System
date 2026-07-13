@@ -21,7 +21,7 @@ export default function Invoices() {
         try {
             await payMutation.mutateAsync({
                 id: payingInvoice._id,
-                paymentMethod,
+                amountPaid: payingInvoice.remainingAmount,
             });
             setPayingInvoice(null);
             refetch();

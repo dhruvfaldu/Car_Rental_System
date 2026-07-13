@@ -31,6 +31,10 @@ class QueryBuilder {
         if (this.queryString.category)
             filter.category = this.queryString.category;
 
+        if (this.queryString.isFeatured !== undefined) {
+            filter.isFeatured = this.queryString.isFeatured === "true" || this.queryString.isFeatured === true;
+        }
+
         const fuelTypeParam = this.queryString.fuelType || this.queryString.fuel;
         if (fuelTypeParam) {
             const values = fuelTypeParam.split(",");

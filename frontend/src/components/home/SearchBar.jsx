@@ -1,30 +1,19 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-
 import {
     CalendarIcon,
     Search,
-    ChevronDown,
+    MapPin,
+    CalendarDays
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from "@/components/ui/carousel";
-import car1 from "@/assets/innova.png";
-import car2 from "@/assets/octivia.png";
-import car3 from "@/assets/main_car.png";
-
 import { Calendar } from "@/components/ui/calendar";
 
 const locations = [
@@ -37,155 +26,119 @@ const locations = [
 ];
 
 export default function SearchBar() {
-    const [pickupLocation, setPickupLocation] = useState("");
+    const navigate = useNavigate();
+    const [pickupLocation, setPickupLocation] = useState(localStorage.getItem("pickupLocation") || "");
+    const [pickupDate, setPickupDate] = useState(() => {
+        const stored = localStorage.getItem("pickupDate");
+        return stored ? new Date(stored) : new Date();
+    });
+    const [returnDate, setReturnDate] = useState(() => {
+        const stored = localStorage.getItem("returnDate");
+        return stored ? new Date(stored) : new Date(Date.now() + 86400000);
+    });
 
-    const [pickupDate, setPickupDate] = useState(new Date());
+    const handleSearch = () => {
+        localStorage.setItem("pickupLocation", pickupLocation);
+        localStorage.setItem("pickupDate", format(pickupDate, "yyyy-MM-dd"));
+        localStorage.setItem("returnDate", format(returnDate, "yyyy-MM-dd"));
 
-    const [returnDate, setReturnDate] = useState(
-        new Date(Date.now() + 86400000)
-    );
-    const cars = [car3, car2, car1];
+        if (pickupLocation) {
+            navigate(`/cars?search=${encodeURIComponent(pickupLocation)}`);
+        } else {
+            navigate(`/cars`);
+        }
+    };
 
     return (
-        <>
-            <div className="flex items-center justify-center ">
-                <div className="flex flex-col items-center justify-center gap-14 h-screen">
-                    <h1 className="text-4xl font-semibold">
-                        Luxury cars on Rent
-                    </h1>
-
-                    <div className=" flex items-center justify-between mx-auto  max-w-4xl rounded-full bg-white shadow-xl px-10 py-5">
-
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-4 items-center">
-
-                            {/* Pickup Location */}
-                            <div>
-                                <p className="font-semibold flex items-center gap-1">
-                                    Pickup Location
-                                    <ChevronDown size={16} />
-                                </p>
-
-                                <select
-                                    className="mt-2 w-full bg-transparent text-muted-foreground outline-none"
-                                    value={pickupLocation}
-                                    onChange={(e) => setPickupLocation(e.target.value)}
-                                >
-                                    <option value="">
-                                        Please select location
-                                    </option>
-
-                                    {locations.map((city) => (
-                                        <option
-                                            key={city}
-                                            value={city}
-                                        >
-                                            {city}
-                                        </option>
-                                    ))}
-                                </select>
-
-                            </div>
-
-                            {/* Pickup Date */}
-
-                            <div>
-                                <p className="font-semibold">
-                                    Pick-up Date
-                                </p>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            className="mt-2 w-full border justify-between p-0 font-normal"
-                                        >
-                                            {format(pickupDate, "dd-MM-yyyy")}
-
-                                            <CalendarIcon size={18} />
-
-                                        </Button>
-
-                                    </PopoverTrigger>
-
-                                    <PopoverContent className="w-auto p-0">
-
-                                        <Calendar
-                                            mode="single"
-                                            selected={pickupDate}
-                                            onSelect={setPickupDate}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                            </div>
-
-                            {/* Return Date */}
-                            <div>
-                                <p className="font-semibold">
-                                    Return Date
-                                </p>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            className="mt-2 w-full justify-between p-0 font-normal"
-                                        >
-                                            {format(returnDate, "dd-MM-yyyy")}
-                                            <CalendarIcon size={18} />
-                                        </Button>
-                                    </PopoverTrigger>
-
-                                    <PopoverContent className="w-auto p-0">
-
-                                        <Calendar
-                                            mode="single"
-                                            selected={returnDate}
-                                            onSelect={setReturnDate}
-                                            disabled={(date) =>
-                                                date < pickupDate
-                                            }
-                                        />
-
-                                    </PopoverContent>
-                                </Popover>
-                            </div>
-                        </div>
-                        {/* Search Button */}
-
-                        <Button
-                            className="h-14 rounded-full text-base w-1/5 font-semibold"
+        <div className="w-full max-w-5xl bg-white border border-slate-100 rounded-2xl md:rounded-full shadow-2xl p-4 md:py-3 md:px-6">
+            <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr_1fr_auto] gap-4 items-center">
+                {/* Pickup Location */}
+                <div className="flex items-center gap-3 px-3 py-2 md:py-0 border-b md:border-b-0 md:border-r border-slate-150">
+                    <MapPin className="text-indigo-600 shrink-0" size={20} />
+                    <div className="flex-1">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Pickup Location
+                        </label>
+                        <select
+                            className="mt-1 w-full bg-transparent text-sm font-semibold text-slate-800 outline-none cursor-pointer focus:text-indigo-600"
+                            value={pickupLocation}
+                            onChange={(e) => setPickupLocation(e.target.value)}
                         >
-                            <Search className="mr-2 h-5 w-5" />
-                            Search
-                        </Button>
-
-                    </div>
-                    {/* <div className="max-h-74 max-w-4xl">
-                        <img src="src/assets/main_car.png" alt="Car Image" />
-                    </div> */}
-                    <div className="max-w-4xl max-h-74">
-                        <Carousel className="w-full">
-                            <CarouselContent>
-
-                                {cars.map((car, index) => (
-                                    <CarouselItem key={index}>
-                                        <img
-                                            src={car}
-                                            alt={`Car ${index + 1}`}
-                                            className="w-full object-contain"
-                                        />
-                                    </CarouselItem>
-                                ))}
-
-                            </CarouselContent>
-
-                            <CarouselPrevious />
-
-                            <CarouselNext />
-
-                        </Carousel>
+                            <option value="">Select location</option>
+                            {locations.map((city) => (
+                                <option key={city} value={city}>
+                                    {city}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
+                {/* Pickup Date */}
+                <div className="flex items-center gap-3 px-3 py-2 md:py-0 border-b md:border-b-0 md:border-r border-slate-150">
+                    <CalendarDays className="text-indigo-600 shrink-0" size={20} />
+                    <div className="flex-1 min-w-0">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Pick-Up Date
+                        </label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <button className="mt-1 w-full text-left text-sm font-semibold text-slate-800 outline-none cursor-pointer flex items-center justify-between hover:text-indigo-600">
+                                    <span className="truncate">
+                                        {format(pickupDate, "dd MMM yyyy")}
+                                    </span>
+                                </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-white shadow-xl border border-slate-100 rounded-xl" align="start">
+                                <Calendar
+                                    mode="single"
+                                    selected={pickupDate}
+                                    onSelect={(date) => date && setPickupDate(date)}
+                                    disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </div>
+
+                {/* Return Date */}
+                <div className="flex items-center gap-3 px-3 py-2 md:py-0 border-b md:border-b-0 border-slate-150">
+                    <CalendarDays className="text-indigo-600 shrink-0" size={20} />
+                    <div className="flex-1 min-w-0">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Return Date
+                        </label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <button className="mt-1 w-full text-left text-sm font-semibold text-slate-800 outline-none cursor-pointer flex items-center justify-between hover:text-indigo-600">
+                                    <span className="truncate">
+                                        {format(returnDate, "dd MMM yyyy")}
+                                    </span>
+                                </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-white shadow-xl border border-slate-100 rounded-xl" align="start">
+                                <Calendar
+                                    mode="single"
+                                    selected={returnDate}
+                                    onSelect={(date) => date && setReturnDate(date)}
+                                    disabled={(date) => date < pickupDate}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </div>
+
+                {/* Search Button */}
+                <div className="px-3 md:px-0">
+                    <Button
+                        onClick={handleSearch}
+                        className="w-full md:w-auto h-12 md:h-14 rounded-full text-base font-bold bg-slate-900 hover:bg-slate-800 text-white cursor-pointer px-6 flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    >
+                        <Search className="h-5 w-5" />
+                        Search Cars
+                    </Button>
+                </div>
             </div>
-        </>
+        </div>
     );
 }
