@@ -10,7 +10,7 @@ export const getInvoiceById = async (id) => {
     return data;
 };
 
-export const payInvoiceBalance = async ({ id, paymentMethod }) => {
-    const { data } = await api.patch(`/invoices/${id}/pay`, { paymentMethod });
+export const payInvoiceBalance = async ({ id, amountPaid }) => {
+    const { data } = await api.patch(`/invoices/${id}/pay`, { amountPaid });
     return data;
 };

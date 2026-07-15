@@ -60,6 +60,16 @@ export const updateProfile = async (userId, updateData) => {
     if (updateData.phone) user.phone = updateData.phone;
     
     if (updateData.password) {
+        if (!updateData.currentPassword) {
+            throw new ApiError(400, "Current password is required to set a new password");
+        }
+
+        const userWithPassword = await User.findById(userId).select("+password");
+        const isPasswordCorrect = await userWithPassword.comparePassword(updateData.currentPassword);
+        if (!isPasswordCorrect) {
+            throw new ApiError(400, "Current password is incorrect");
+        }
+
         user.password = updateData.password;
     }
 

@@ -127,6 +127,7 @@ const seedDatabase = async () => {
             fuelChargePercentage: 50,
             images: [{ public_id: "model3_1", secure_url: "https://res.cloudinary.com/model3.jpg" }],
             status: "available",
+            isFeatured: true,
             isActive: true,
         });
 
@@ -150,6 +151,7 @@ const seedDatabase = async () => {
             fuelChargePercentage: 60,
             images: [{ public_id: "creta_1", secure_url: "https://res.cloudinary.com/creta.jpg" }],
             status: "available",
+            isFeatured: true,
             isActive: true,
         });
 

@@ -46,10 +46,10 @@ export const checkAvailability = async ({
         throw new ApiError(400, "Car is inactive.");
     }
 
-    if (car.status !== CAR_STATUS.AVAILABLE) {
+    if (car.status === CAR_STATUS.MAINTENANCE) {
         throw new ApiError(
             400,
-            "Car is not available for booking."
+            "Car is currently in maintenance and not available for booking."
         );
     }
 
